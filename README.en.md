@@ -2,6 +2,8 @@
 
 **Turn engineering discipline into machinery.**
 
+Read online (no install needed): **https://one-ok.github.io/ironlaw/**
+
 A skill suite for WorkBuddy that solves one narrow problem:
 
 > AI and humans can both write code that *looks* correct. Almost nobody can prove it.

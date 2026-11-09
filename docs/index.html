@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IronLaw — 把工程纪律变成机器</title>
+<meta name="description" content="IronLaw 是一套 WorkBuddy 技能套件：把「这次改动可信」落成门禁、断言与四方真值核验。6 个技能，3 个零依赖工具，MIT。">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#FAF9F6">
+<meta property="og:type" content="website">
+<meta property="og:title" content="IronLaw — 把工程纪律变成机器">
+<meta property="og:description" content="AI 和人都能很快写出「看起来对」的代码，但没人能证明它真的对。IronLaw 把每一次判断都落成机器能查的东西。">
+<meta property="og:url" content="https://one-ok.github.io/ironlaw/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314120F'/%3E%3Crect x='9' y='9' width='14' height='14' rx='2' fill='%23B3372C'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --paper:#FAF9F6;
+    --surface:#FFFFFF;
+    --ink:#14120F;
+    --ink-2:#3B3833;
+    --ink-3:#575248;
+    --muted:#726C62;
+    --line:#E7E2D9;
+    --line-2:#D5CEC0;
+    --red:#B3372C;
+    --green:#2E6B4F;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+    --ease:cubic-bezier(.22,.72,.24,1);
+    --maxw:1120px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:16px;line-height:1.75;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px,rgba(20,18,15,.062) 1px,transparent 0);
+    background-size:22px 22px;
+    -webkit-mask-image:linear-gradient(180deg,#000 0,#000 34%,transparent 72%);
+            mask-image:linear-gradient(180deg,#000 0,#000 34%,transparent 72%);
+  }
+  .page{position:relative;z-index:1}
+  .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,4vw,40px)}
+  a{color:inherit;text-decoration:none}
+  h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.02em;line-height:1.25}
+  p{margin:0}
+  .panel,.law,.step,.tool,.inst,.proof > *,.compare > *,.laws > *,.tools > *,.install > *{min-width:0}
+  ::selection{background:rgba(179,55,44,.16)}
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);
+    background:rgba(250,249,246,.82);border-bottom:1px solid var(--line);
+  }
+  .nav-in{display:flex;align-items:center;gap:clamp(14px,3vw,34px);height:60px}
+  .brand{display:flex;align-items:center;gap:10px;flex:none}
+  .mark{width:22px;height:22px;border-radius:6px;background:var(--ink);display:grid;place-items:center;flex:none}
+  .mark i{width:8px;height:8px;border-radius:1.5px;background:var(--red);display:block}
+  .brand b{font-size:15px;font-weight:650;letter-spacing:-.01em}
+  .chip{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);
+    border:1px solid var(--line-2);border-radius:99px;padding:1px 7px;white-space:nowrap;
+  }
+  .nav-links{display:flex;align-items:center;gap:clamp(12px,2.2vw,26px);margin-left:auto}
+  .nav-links a{font-size:13.5px;color:var(--muted);transition:color .2s var(--ease)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink)}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;border-radius:99px;
+    font-size:13.5px;font-weight:550;padding:8px 15px;border:1px solid var(--line-2);color:var(--ink);
+    transition:border-color .2s var(--ease),background .2s var(--ease),color .2s var(--ease),transform .2s var(--ease);
+  }
+  .btn:hover{border-color:var(--ink);transform:translateY(-1px)}
+  @media (max-width:820px){ .nav-links a:not(.btn){display:none} }
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(52px,8vw,104px) 0 clamp(44px,6vw,76px)}
+  .eyebrow{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:clamp(20px,3vw,30px);
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--red);flex:none}
+  .hero h1{font-size:clamp(36px,6.4vw,66px);letter-spacing:-.035em;line-height:1.1}
+  .hero h1 .dot{color:var(--red)}
+  .lede{
+    margin-top:clamp(20px,3vw,28px);max-width:616px;
+    font-size:clamp(16px,1.6vw,17.5px);line-height:1.85;color:var(--ink-2);
+  }
+  .lede em{font-style:normal;background:linear-gradient(transparent 62%,rgba(179,55,44,.16) 62%);padding:0 2px}
+  .cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:clamp(28px,4vw,38px)}
+  .btn-lg{font-size:14.5px;padding:12px 22px;border-radius:99px}
+  .btn-solid{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .btn-solid:hover{background:#26221C;border-color:#26221C}
+  .cta-note{font-size:12.5px;color:var(--muted);margin-left:2px}
+
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    margin-top:clamp(44px,6vw,68px);
+  }
+  .stat{padding:20px 0 22px;border-right:1px solid var(--line)}
+  .stat:last-child{border-right:0}
+  .stat b{display:block;font-family:var(--mono);font-size:clamp(22px,2.6vw,29px);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+  .stat span{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+  .stat{padding-left:0}
+  .stat+.stat{padding-left:clamp(14px,2.4vw,26px)}
+  @media (max-width:640px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat:nth-child(2){border-right:0}
+    .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line)}
+    .stat:nth-child(3){padding-left:0}
+  }
+
+  /* ---------- section shell ---------- */
+  .sec{padding:clamp(52px,7.4vw,98px) 0;border-top:1px solid var(--line);scroll-margin-top:74px}
+  .sec-head{max-width:740px;margin-bottom:clamp(30px,4vw,50px)}
+  .sec-num{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:var(--red);display:block;margin-bottom:12px}
+  .sec-head h2{font-size:clamp(24px,3.3vw,36px)}
+  .sec-head p{margin-top:14px;font-size:15.5px;color:var(--muted);line-height:1.85;max-width:640px}
+
+  /* ---------- 01 compare ---------- */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,20px)}
+  @media (max-width:760px){ .compare{grid-template-columns:minmax(0,1fr)} }
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,3vw,28px)}
+  .panel h3{font-size:15px;letter-spacing:0;display:flex;align-items:center;gap:9px}
+  .panel h3 .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-2);border-radius:4px;padding:1px 6px;font-weight:500}
+  .panel ul{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:11px}
+  .panel li{font-size:14.5px;line-height:1.65;color:var(--ink-2);display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start}
+  .panel li i{width:14px;height:14px;margin-top:4px;border-radius:50%;flex:none;display:grid;place-items:center}
+  .panel.bad li i{border:1px solid var(--line-2);position:relative}
+  .panel.bad li i::after{content:"";position:absolute;left:3px;right:3px;top:50%;height:1px;background:var(--line-2)}
+  .panel.good{border-color:#CFD9D0}
+  .panel.good li i{background:var(--green);border:0}
+  .panel.good li i::after{content:"";width:7px;height:4px;border-left:1.6px solid #fff;border-bottom:1.6px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+  .verdict{
+    margin-top:clamp(24px,3.4vw,38px);padding:22px clamp(20px,3vw,28px);
+    border-left:2px solid var(--red);background:rgba(179,55,44,.045);
+    border-radius:0 10px 10px 0;font-size:clamp(15px,1.7vw,17px);line-height:1.75;color:var(--ink);
+  }
+  .verdict b{font-weight:650}
+
+  /* ---------- 02 laws ---------- */
+  .laws{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.8vw,18px)}
+  @media (max-width:760px){ .laws{grid-template-columns:minmax(0,1fr)} }
+  .law{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,2.8vw,26px);
+    transition:border-color .35s var(--ease),box-shadow .35s var(--ease),transform .35s var(--ease);
+  }
+  .law:hover{border-color:var(--line-2);box-shadow:0 14px 34px -22px rgba(20,18,15,.45);transform:translateY(-2px)}
+  .law b.n{display:block;font-family:var(--mono);font-size:11.5px;color:var(--red);letter-spacing:.1em;margin-bottom:12px}
+  .law h3{font-size:16.5px;letter-spacing:-.01em;line-height:1.45}
+  .law p{margin-top:9px;font-size:14.4px;line-height:1.78;color:var(--ink-3)}
+  .law p code{font-family:var(--mono);font-size:12.5px;background:rgba(20,18,15,.055);padding:1px 5px;border-radius:4px;color:var(--ink-2)}
+
+  /* ---------- 03 flow ---------- */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-bottom:clamp(26px,3.6vw,40px)}
+  .step{position:relative;padding:34px 18px 22px 0}
+  .step::before{
+    content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--line);z-index:0;
+  }
+  .step .k{
+    position:absolute;left:0;top:-11px;z-index:2;
+    width:22px;height:22px;border-radius:50%;background:var(--paper);
+    border:2px solid var(--line-2);color:var(--line-2);
+    font-family:var(--mono);font-size:10.5px;font-weight:600;line-height:18px;
+    text-align:center;letter-spacing:0;
+    transition:background .45s var(--ease),border-color .45s var(--ease),color .45s var(--ease);
+  }
+  .step.in .k{background:var(--red);border-color:var(--red);color:#fff}
+  .step h3{font-size:15.5px;margin-top:0;letter-spacing:-.01em}
+  .step .en{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#A79F91;margin-top:5px}
+  .step p{margin-top:9px;font-size:13px;line-height:1.7;color:var(--muted);padding-right:6px}
+  @media (max-width:860px){
+    .flow{grid-template-columns:1fr}
+    .step{padding:0 0 0 36px;margin-bottom:26px}
+    .step::before{left:10px;right:auto;top:0;bottom:-26px;width:2px;height:auto}
+    .step:last-child::before{display:none}
+    .step .k{left:0;top:0}
+  }
+  .skip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media (max-width:760px){ .skip{grid-template-columns:1fr 1fr} }
+  .skip div{font-size:13px;color:var(--muted);border:1px dashed var(--line-2);border-radius:10px;padding:11px 13px;line-height:1.6}
+  .skip div b{color:var(--ink);font-weight:600}
+
+  /* ---------- 04 proof ---------- */
+  .proof{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:clamp(22px,3.4vw,46px);align-items:start}
+  @media (max-width:900px){ .proof{grid-template-columns:minmax(0,1fr)} }
+  .proof-copy p{font-size:14.8px;line-height:1.85;color:var(--ink-2)}
+  .proof-copy p+p{margin-top:14px}
+  .proof-copy .quote{font-family:var(--mono);font-size:12.5px;line-height:1.9;color:var(--muted);border-left:1px solid var(--line-2);padding-left:14px;margin-top:18px;white-space:pre-wrap}
+  .term{border-radius:13px;overflow:hidden;border:1px solid #26221C;background:#14120F;margin-bottom:18px}
+  .term-bar{display:flex;align-items:center;gap:7px;padding:10px 13px;background:#1A1712;border-bottom:1px solid #26221C}
+  .term-bar i{width:8px;height:8px;border-radius:50%;background:#3B362E;display:block}
+  .term-bar span{margin-left:7px;font-family:var(--mono);font-size:11.5px;color:#8B8478}
+  .term pre{margin:0;padding:15px 16px 17px;overflow-x:auto;font-family:var(--mono);font-size:12.3px;line-height:1.95;color:#D9D4C9;white-space:pre;tab-size:2}
+  .t-ok{color:#7DC79C}
+  .t-bad{color:#F07566}
+  .t-dim{color:#7A7466}
+  .t-cmd{color:#E8E2D4}
+  .t-mark{color:#C9A227}
+  .callout{
+    margin-top:clamp(22px,3vw,30px);border:1px solid var(--line-2);border-left:2px solid var(--red);
+    background:var(--surface);border-radius:0 12px 12px 0;padding:18px clamp(18px,2.6vw,24px);
+    font-size:14.6px;line-height:1.75;color:var(--ink-2);
+  }
+  .callout b{color:var(--ink);font-weight:650}
+
+  /* ---------- 05 tools ---------- */
+  .tools{display:grid;gap:clamp(12px,1.8vw,16px)}
+  .tool{
+    background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:clamp(18px,2.6vw,24px);
+    transition:border-color .35s var(--ease),box-shadow .35s var(--ease);
+  }
+  .tool:hover{border-color:var(--line-2);box-shadow:0 12px 30px -24px rgba(20,18,15,.5)}
+  .tool-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
+  .tool-top code{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .tool-top span{font-size:13px;color:var(--muted)}
+  .cmd{
+    position:relative;margin-top:13px;background:#14120F;border-radius:9px;
+    padding:12px 78px 12px 14px;overflow:hidden;
+  }
+  .cmd code{display:block;font-family:var(--mono);font-size:12.3px;line-height:1.6;color:#D9D4C9;overflow-x:auto;white-space:pre}
+  .copy{
+    position:absolute;top:8px;right:8px;border:1px solid #3A352C;background:#211D17;color:#9C9588;
+    font-family:var(--sans);font-size:11.5px;border-radius:6px;padding:4px 9px;cursor:pointer;
+    transition:color .2s,background .2s,border-color .2s;
+  }
+  .copy:hover{color:#F2EDE2;border-color:#5A5347}
+  .copy.done{color:#8FD3A9;border-color:#2F5B43}
+
+  /* ---------- 06 install ---------- */
+  .install{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.8vw,16px)}
+  @media (max-width:900px){ .install{grid-template-columns:minmax(0,1fr)} }
+  .inst{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:clamp(18px,2.6vw,24px);display:flex;flex-direction:column}
+  .inst b.k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--red)}
+  .inst h3{font-size:15px;margin-top:10px;letter-spacing:-.01em}
+  .inst p{font-size:13.2px;color:var(--muted);line-height:1.7;margin:8px 0 16px}
+  .inst .cmd{margin-top:auto;padding:11px 62px 11px 14px}
+  .inst .cmd code{white-space:pre-wrap;overflow-wrap:normal;overflow-x:visible;font-size:12px}
+  .note{margin-top:clamp(20px,2.8vw,26px);font-size:13.5px;color:var(--muted);line-height:1.8}
+  .note b{color:var(--ink);font-weight:600;white-space:nowrap}
+
+  /* ---------- footer ---------- */
+  .foot{border-top:1px solid var(--line);padding:clamp(30px,4vw,44px) 0 clamp(40px,6vw,64px)}
+  .foot-in{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  .foot .brand b{font-size:14px}
+  .foot-links{display:flex;flex-wrap:wrap;gap:18px;margin-left:auto;font-size:13px;color:var(--muted)}
+  .foot-links a:hover{color:var(--ink)}
+  .sign{width:100%;margin-top:20px;padding-top:20px;border-top:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+  .sign span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .sign strong{font-size:13.5px;font-weight:550;color:var(--ink-2)}
+
+  /* ---------- reveal ---------- */
+  @media (max-width:720px){
+    .term{position:relative}
+    .term pre{
+      font-size:11.8px;line-height:1.95;
+      -webkit-mask-image:linear-gradient(to right,#000 86%,rgba(0,0,0,.15) 100%);
+              mask-image:linear-gradient(to right,#000 86%,rgba(0,0,0,.15) 100%);
+    }
+    .cmd{padding-right:70px}
+    .cmd code{white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:visible}
+  }
+  [data-reveal]{opacity:0;transform:translateY(14px)}
+  [data-reveal].in{opacity:1;transform:none;transition:opacity .62s var(--ease),transform .62s var(--ease);transition-delay:calc(var(--i,0) * 65ms)}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    [data-reveal]{opacity:1;transform:none;transition:none}
+    *{animation:none!important}
+  }
+</style>
+<noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body>
+<div class="page">
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top" aria-label="IronLaw 首页">
+        <span class="mark" aria-hidden="true"><i></i></span>
+        <b>IronLaw</b>
+        <span class="chip">v1.0.0</span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="#problem">问题</a>
+        <a href="#laws">铁律</a>
+        <a href="#flow">流程</a>
+        <a href="#proof">证据</a>
+        <a href="#tools">工具</a>
+        <a class="btn" href="https://github.com/One-OK/ironlaw" target="_blank" rel="noopener">GitHub<svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M8.5 3.5H4.4M8.5 3.5v4.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">WorkBuddy Skills · 6 技能 · MIT</p>
+        <h1 data-reveal>把工程纪律<br>变成机器<span class="dot">。</span></h1>
+        <p class="lede" data-reveal style="--i:1">
+          AI 和人都能很快写出「看起来对」的代码，但没人能证明它真的对。
+          IronLaw 不提升写代码的速度，它提升的是<em>「这次改动可信」的可证明程度</em>——
+          把每一次判断都落成机器能查的东西：门禁、断言、真值核验。
+        </p>
+        <div class="cta" data-reveal style="--i:2">
+          <a class="btn btn-solid btn-lg" href="https://github.com/One-OK/ironlaw/releases/download/v1.0.0/ironlaw-1.0.0.zip">下载 v1.0.0</a>
+          <a class="btn btn-lg" href="#proof">先看它怎么抓错</a>
+          <span class="cta-note">122 KB · 零依赖 · 不用装也能读完这页</span>
+        </div>
+
+        <div class="stats" data-reveal style="--i:3">
+          <div class="stat"><b>6</b><span>技能，一句话路由</span></div>
+          <div class="stat"><b>4</b><span>铁律，违反即退化成文档</span></div>
+          <div class="stat"><b>3</b><span>工具，可直接跑</span></div>
+          <div class="stat"><b>0</b><span>第三方依赖</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01 PROBLEM -->
+    <section class="sec" id="problem">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="sec-num">01 / THE PROBLEM</span>
+          <h2>「看起来对」和「可证明对」<br>差着一整套证据链</h2>
+          <p>代码跑起来了、页面点得动、控制台没报错——这些都不构成证明。真正缺的是：改完以后，你凭什么说它对了？</p>
+        </div>
+
+        <div class="compare">
+          <div class="panel bad" data-reveal style="--i:1">
+            <h3>看起来对<span class="tag">常见状态</span></h3>
+            <ul>
+              <li><i></i>本地跑通了，就当作改好了</li>
+              <li><i></i>「其他地方我都检查过了」——没有清单</li>
+              <li><i></i>测试是绿的，但没人验证过测试会不会红</li>
+              <li><i></i>部署脚本说成功，线上还是旧版本</li>
+              <li><i></i>同一个判定规则，在三个文件里各写了一遍</li>
+            </ul>
+          </div>
+          <div class="panel good" data-reveal style="--i:2">
+            <h3>可证明对<span class="tag">IronLaw 之后</span></h3>
+            <ul>
+              <li><i></i>根因是一句话机制，不是复述症状</li>
+              <li><i></i>影响链是机器算出的覆盖率，漏的键被点名</li>
+              <li><i></i>守卫做过反向探针：改坏必须转红</li>
+              <li><i></i>线上真值来自接口返回，不是部署脚本的自述</li>
+              <li><i></i>判定规则只有一份实现，别的都是它的调用方</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="verdict" data-reveal style="--i:3">
+          <b>一句话：</b>不要相信「我觉得改好了」。要么机器能查，要么就当没改。
+        </p>
+      </div>
+    </section>
+
+    <!-- 02 LAWS -->
+    <section class="sec" id="laws">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="sec-num">02 / THE FOUR LAWS</span>
+          <h2>整套东西立在四条铁律上</h2>
+          <p>违反任何一条，其余部分就退化成「文档」——写着很好看，拦不住任何东西。</p>
+        </div>
+
+        <div class="laws">
+          <article class="law" data-reveal style="--i:0">
+            <b class="n">LAW 01</b>
+            <h3>必填必须 fail-closed</h3>
+            <p>缺文件、缺章节、空数据分支必须判红。默认放行等于条款不存在。</p>
+          </article>
+          <article class="law" data-reveal style="--i:1">
+            <b class="n">LAW 02</b>
+            <h3>新守卫必须带反向探针</h3>
+            <p>去掉保护必须转红，且能逐字节复原。不验证「改坏会红」的守卫，等于没有守卫。</p>
+          </article>
+          <article class="law" data-reveal style="--i:2">
+            <b class="n">LAW 03</b>
+            <h3>跨脚本口径放单一真源</h3>
+            <p>同一个判定只能有一份实现。禁止两份正则互相掩护——那只是在制造「都通过」的假象。</p>
+          </article>
+          <article class="law" data-reveal style="--i:3">
+            <b class="n">LAW 04</b>
+            <h3>影响链用机器算的覆盖率逐键闭环</h3>
+            <p>漏掉的键必须点名，不许用「都检查过了」结案。覆盖率算不出来的，就是还没闭环。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 FLOW -->
+    <section class="sec" id="flow">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="sec-num">03 / THE PIPELINE</span>
+          <h2>五段流程，按改动大小裁剪</h2>
+          <p>不是每次都五段全跑。改一行文案只走第&nbsp;2&nbsp;段；动产品代码走&nbsp;2–5&nbsp;段；只有新项目才需要第&nbsp;1&nbsp;段。</p>
+        </div>
+
+        <div class="flow" data-reveal>
+          <div class="step" data-reveal style="--i:0">
+            <span class="k">1</span>
+            <h3>bootstrap</h3>
+            <p class="en">scaffold</p>
+            <p>一次性铺设施：钩子、门禁、共享件、文档骨架。</p>
+          </div>
+          <div class="step" data-reveal style="--i:1">
+            <span class="k">2</span>
+            <h3>change</h3>
+            <p class="en">discipline</p>
+            <p>开工六问 → 根因 → 影响链 → 修法，不是急着改代码。</p>
+          </div>
+          <div class="step" data-reveal style="--i:2">
+            <span class="k">3</span>
+            <h3>gate</h3>
+            <p class="en">guards</p>
+            <p>把这次的判据钉成机器可查的守卫，并证明改坏会红。</p>
+          </div>
+          <div class="step" data-reveal style="--i:3">
+            <span class="k">4</span>
+            <h3>record</h3>
+            <p class="en">evidence</p>
+            <p>七段档案 + 断言表 + 三段式提交信息，写档案就是查漏。</p>
+          </div>
+          <div class="step" data-reveal style="--i:4">
+            <span class="k">5</span>
+            <h3>ship</h3>
+            <p class="en">truth</p>
+            <p>推送 → 出包 → 部署 → 四方真值核验 → 登记。</p>
+          </div>
+        </div>
+
+        <div class="skip" data-reveal style="--i:1">
+          <div><b>改一行文案</b><br>只跑第&nbsp;2&nbsp;段</div>
+          <div><b>改产品代码</b><br>第&nbsp;2–5&nbsp;段</div>
+          <div><b>只加门禁</b><br>第&nbsp;2–4&nbsp;段</div>
+          <div><b>新项目</b><br>第&nbsp;1&nbsp;段，等第一次真实改动再走第&nbsp;2&nbsp;段</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 PROOF -->
+    <section class="sec" id="proof">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="sec-num">04 / THE PROOF</span>
+          <h2>它抓错过什么</h2>
+          <p>一个虚构的订单系统，导出的 CSV 里金额少了两位小数：<code style="font-family:var(--mono);font-size:.92em;background:rgba(20,18,15,.055);padding:1px 5px;border-radius:4px">1234.56</code> 变成 <code style="font-family:var(--mono);font-size:.92em;background:rgba(20,18,15,.055);padding:1px 5px;border-radius:4px">12.34</code>。</p>
+        </div>
+
+        <div class="proof">
+          <div class="proof-copy" data-reveal style="--i:1">
+            <p>第一反应是在导出模块里补一个 <b>÷100</b>。但那只是把症状按住——第三个人加导出时还会错。</p>
+            <p>于是往上追了三层，根因是：<b>金额单位没有单一真源，靠命名口头传播。</b>修法因此变成「收口成 <b>formatMoney(cents)</b> 唯一入口，并加守卫禁止视图层裸用 amount」。</p>
+            <p>然后守着这条判据，先证明守卫真的会红：</p>
+            <div class="term" style="margin-top:14px">
+              <div class="term-bar"><i></i><i></i><i></i><span>reverse-probe</span></div>
+              <pre><span class="t-cmd">$ node reverse-probe.mjs --config probe.json</span>
+<span class="t-dim">[reverse-probe] 基线通过 ✓</span>
+
+<span class="t-ok">  ✓ 去掉 formatMoney 白名单：转红（exit=1）且复原一致</span>
+<span class="t-dim">     首个红行：❌ 金额必须经 formatMoney()，不得裸用 amount</span>
+<span class="t-ok">  ✓ 去掉金额判断：转红（exit=1）且复原一致</span>
+<span class="t-dim">     首个红行：❌ 金额必须经 formatMoney()，不得裸用 amount</span>
+
+<span class="t-dim">[reverse-probe] OK：2 个案例全部「变异转红 + 逐字节复原」</span></pre>
+            </div>
+            <p style="font-size:13.6px;color:var(--muted)">变异后仍然全绿，说明这道门禁是假的——它拦不住任何东西，只是心理安慰。</p>
+          </div>
+
+          <div data-reveal style="--i:2">
+            <div class="term">
+              <div class="term-bar"><i></i><i></i><i></i><span>verify-record — 执行档案里的断言表</span></div>
+              <pre><span class="t-cmd">$ node verify-record.mjs docs/change-records/2026-11-10-fix-money-export.md</span>
+<span class="t-dim">[verify-record] docs/change-records/2026-11-10-fix-money-export.md</span>
+<span class="t-ok">  ✓ #1 格式化函数唯一：1 行（期望 =1）</span>
+<span class="t-ok">  ✓ #2 视图层不再裸用 amount：0 行（期望 =0）</span>
+<span class="t-ok">  ✓ #3 导出模块已走格式化：2 行（期望 &gt;=1）</span>
+<span class="t-ok">  ✓ #4 移动端同步修复：1 行（期望 &gt;=1）</span>
+<span class="t-bad">  ✗ #5 报表模板同步修复：0 行（期望 &gt;=1）   ← 漏了！</span>
+
+<span class="t-bad">[verify-record] FAIL：1 项不合格</span>
+<span class="t-bad">  - 断言 #5（报表模板同步修复）不成立：期望 &gt;=1，实际 0 行</span></pre>
+            </div>
+            <p style="font-size:13.6px;color:var(--muted);line-height:1.8">
+              第 5 条红了，说明报表模板漏改。这是它最有用的地方：<b style="color:var(--ink)">写档案的过程，就是发现自己漏改的过程。</b>
+            </p>
+
+            <div class="term" style="margin-top:18px">
+              <div class="term-bar"><i></i><i></i><i></i><span>ship-truth — 部署后核验四处真值</span></div>
+              <pre><span class="t-dim">[ship-truth] 本地版本 1.4.2</span>
+<span class="t-ok">  ✓ 版本一致：PASS — 1.4.2（3 处）</span>
+<span class="t-ok">  ✓ 工作区干净：PASS — 无未提交改动</span>
+<span class="t-ok">  ✓ 本地 = 远端：PASS — abc1234de</span>
+<span class="t-ok">  ✓ 线上版本：PASS — 1.4.2</span>
+<span class="t-dim">  ✓ 分发版本：PASS — 1.4.2</span>
+<span class="t-dim">  ✓ 台账已登记：PASS — 最近 40 行含 1.4.2</span>
+
+<span class="t-dim">[ship-truth] 6 通过 / 0 不一致 / 0 无法判定 / 0 跳过</span></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout" data-reveal style="--i:3">
+          <b>断言红了就改代码。</b>放宽断言让它变绿，等于把测量仪器砸了——从此以后每个数字都不可信。
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 TOOLS -->
+    <section class="sec" id="tools">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="sec-num">05 / THE TOOLS</span>
+          <h2>三个能直接跑的工具，不是示例</h2>
+          <p>纯 Node，无第三方依赖。上面那些输出，就是它们跑出来的。</p>
+        </div>
+
+        <div class="tools">
+          <div class="tool" data-reveal style="--i:0">
+            <div class="tool-top">
+              <code>reverse-probe.mjs</code>
+              <span>反向变异探针：改坏 → 必须转红 → 逐字节复原，并校验命中数</span>
+            </div>
+            <div class="cmd">
+              <code>node plugins/ironlaw/skills/ironlaw-gate/scripts/reverse-probe.mjs --config probe.json</code>
+            </div>
+          </div>
+          <div class="tool" data-reveal style="--i:1">
+            <div class="tool-top">
+              <code>verify-record.mjs</code>
+              <span>直接执行变更档案的 §2.5 断言表，逐条报告，不成立就 FAIL</span>
+            </div>
+            <div class="cmd">
+              <code>node plugins/ironlaw/skills/ironlaw-record/scripts/verify-record.mjs docs/change-records/xxx.md</code>
+            </div>
+          </div>
+          <div class="tool" data-reveal style="--i:2">
+            <div class="tool-top">
+              <code>ship-truth.mjs</code>
+              <span>四方真值核验：本地 / 远端 / 线上 / 分发，四个不一致就不算发版</span>
+            </div>
+            <div class="cmd">
+              <code>node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.json</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 INSTALL -->
+    <section class="sec" id="install">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="sec-num">06 / INSTALL</span>
+          <h2>三种装法，选一种就够</h2>
+          <p>装完重启 WorkBuddy 会话才会被扫描到。技能名本身就是斜杠命令。</p>
+        </div>
+
+        <div class="install">
+          <div class="inst" data-reveal style="--i:0">
+            <b class="k">方式一 · 推荐</b>
+            <h3>一键装进 WorkBuddy</h3>
+            <p>自动包自检 → 复制 6 个技能 → 装后复验 → 打印可用命令。</p>
+            <div class="cmd"><code>node scripts/install.mjs</code></div>
+          </div>
+          <div class="inst" data-reveal style="--i:1">
+            <b class="k">方式二</b>
+            <h3>作为插件市场挂载</h3>
+            <p>仓库根含 marketplace 清单，<b>commands/</b> 会额外启用斜杠命令与参数提示。</p>
+            <div class="cmd"><code>plugins/ironlaw/</code></div>
+          </div>
+          <div class="inst" data-reveal style="--i:2">
+            <b class="k">方式三</b>
+            <h3>只要技能文件</h3>
+            <p>不装命令，只把六个技能目录复制过去，最轻。</p>
+            <div class="cmd"><code>cp -r plugins/ironlaw/skills/* ~/.workbuddy/skills/</code></div>
+          </div>
+        </div>
+
+        <p class="note" data-reveal style="--i:3">
+          常用参数：<b>--dry-run</b> 只看会做什么 · <b>--list</b> 列出包内容 · <b>--prune-legacy</b> 归档旧版散装技能（不删除） · <b>--target dir</b> 装到项目级。
+          调用就三句话：<b>/ironlaw-change</b>、或者说「用铁律修这个 bug」、或者直接描述问题让它自己路由。
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-in">
+        <span class="brand"><span class="mark" aria-hidden="true"><i></i></span><b>IronLaw</b></span>
+        <nav class="foot-links" aria-label="页脚导航">
+          <a href="https://github.com/One-OK/ironlaw" target="_blank" rel="noopener">仓库</a>
+          <a href="https://github.com/One-OK/ironlaw/blob/main/docs/walkthrough.md" target="_blank" rel="noopener">完整走查</a>
+          <a href="https://github.com/One-OK/ironlaw/blob/main/README.en.md" target="_blank" rel="noopener">English</a>
+          <a href="https://github.com/One-OK/ironlaw/releases" target="_blank" rel="noopener">发布记录</a>
+        </nav>
+      </div>
+      <div class="sign">
+        <span>MIT © 2026 IronLaw · v1.0.0</span>
+        <strong>断言红了就改代码。</strong>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 滚动进场
+  var items = document.querySelectorAll('[data-reveal]');
+  if (reduce || !('IntersectionObserver' in window)) {
+    items.forEach(function(el){ el.classList.add('in'); });
+    document.querySelectorAll('.step').forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+    items.forEach(function(el){ io.observe(el); });
+
+    // 流程节点逐一点亮
+    var steps = document.querySelectorAll('.step');
+    var so = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); so.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    steps.forEach(function(el, i){ el.style.transitionDelay = (i * 90) + 'ms'; so.observe(el); });
+  }
+
+  // 复制命令
+  document.querySelectorAll('.cmd').forEach(function(box){
+    var code = box.querySelector('code');
+    if (!code) return;
+    var btn = document.createElement('button');
+    btn.className = 'copy';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制这条命令');
+    btn.addEventListener('click', function(){
+      var text = code.textContent;
+      var done = function(){
+        btn.textContent = '已复制';
+        btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = '复制'; btn.classList.remove('done'); }, 1400);
+      };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, function(){ btn.textContent = '请手动选中'; });
+      } else {
+        var r = document.createRange(); r.selectNodeContents(code);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        try { document.execCommand('copy'); done(); } catch(err){ btn.textContent = '请手动选中'; }
+      }
+    });
+    box.appendChild(btn);
+  });
+
+  // 导航高亮
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  if ('IntersectionObserver' in window) {
+    var no = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        var idx = secs.indexOf(e.target);
+        if (idx < 0) return;
+        links.forEach(function(a){ a.classList.remove('active'); });
+        links[idx].classList.add('active');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    secs.forEach(function(s){ if (s) no.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
