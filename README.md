@@ -138,6 +138,12 @@ cp plugins/ironlaw/skills/ironlaw-gate/assets/guard-skeleton.mjs scripts/check-<
 # 改三处：evaluate / ROOTS / covers
 ```
 
+## 文档
+
+- [`docs/walkthrough.md`](docs/walkthrough.md) —— **一次完整走查**：从「金额少两位小数」到线上确认，五段是怎么走的，每一步的命令和产出长什么样。**第一次用就从这里开始。**
+- [`README.en.md`](README.en.md) —— English version
+- [`CHANGELOG.md`](CHANGELOG.md) —— 版本变化
+
 ## 来源
 
 从一条商业化软件产品线的真实工程史里提炼——那里积累了 89 个门禁脚本、838 行变更纪律、以及一长串踩过的坑：假绿（跳过却算通过）、假红（超时被当成判据失败）、真因被正则吞掉、台账手抄脱节、并行发布线互相覆盖、`push` 成功但没部署。
