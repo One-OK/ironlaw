@@ -167,13 +167,15 @@ node plugins/ironlaw/skills/ironlaw-record/scripts/verify-record.mjs \
 ```
 
 ```text
+[verify-record] docs/change-records/2026-11-10-fix-money-export.md
   ✓ #1 格式化函数唯一：1 行（期望 =1）
   ✓ #2 视图层不再裸用 amount：0 行（期望 =0）
   ✓ #3 导出模块已走格式化：2 行（期望 >=1）
   ✓ #4 移动端同步修复：1 行（期望 >=1）
-  ✓ #5 报表模板同步修复：0 行（期望 >=1）   ← 漏了！
+  ✗ #5 报表模板同步修复：0 行（期望 >=1）   ← 漏了！
 
-[verify-record] FAIL：1 条断言不成立
+[verify-record] FAIL：1 项不合格
+  - 断言 #5（报表模板同步修复）不成立：期望 >=1，实际 0 行
 ```
 
 **这就是它有用的地方**：第 5 条红了，说明报表模板漏改。回去改代码，不是改断言。
@@ -230,12 +232,13 @@ node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.js
 ```text
 [ship-truth] 本地版本 1.4.2
   ✓ 版本一致：PASS — 1.4.2（3 处）
-  ✓ 本地 = 远端：PASS — abc1234
+  ✓ 工作区干净：PASS — 无未提交改动
+  ✓ 本地 = 远端：PASS — abc1234de
   ✓ 线上版本：PASS — 1.4.2
   ✓ 分发版本：PASS — 1.4.2
-  ✓ 台账已登记：PASS
+  ✓ 台账已登记：PASS — 最近 40 行含 1.4.2
 
-[ship-truth] OK：5 项全部一致
+[ship-truth] 6 通过 / 0 不一致 / 0 无法判定 / 0 跳过
 ```
 
 ### 卡住的时候看这里
