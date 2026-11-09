@@ -1,0 +1,13 @@
+# 文本文件统一 LF，二进制显式声明，避免跨平台 diff 噪音与编码损坏
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary
+*.zip binary
+*.gz binary

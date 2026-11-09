@@ -1,0 +1,19 @@
+{
+  "versionFiles": ["package.json", "apps/web/package.json", "apps/api/package.json"],
+  "branch": "main",
+  "requireClean": true,
+  "online": {
+    "url": "https://example.com/api/config",
+    "versionPath": "version",
+    "timeoutMs": 15000
+  },
+  "packageChannel": {
+    "url": "https://example.com/api/v1/updates/check?product=demo&current_version=0.0.0&channel=stable",
+    "versionPath": "manifest.version",
+    "timeoutMs": 20000
+  },
+  "ledger": {
+    "file": "docs/STATUS.md",
+    "expectRecentLines": 40
+  }
+}

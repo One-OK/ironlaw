@@ -1,0 +1,21 @@
+# 依赖与构建产物
+node_modules/
+dist/
+dist-release/
+build/
+coverage/
+
+# 本地运行态与日志（门禁日志、部署状态、锁文件）
+.workbuddy/
+*.log
+
+# 环境与密钥
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db

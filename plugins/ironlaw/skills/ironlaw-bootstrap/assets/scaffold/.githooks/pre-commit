@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# pre-commit：只做「秒级、不会误伤」的检查。
+# 原则：提交阶段的钩子必须快（<3s），慢检查放 pre-push 或门禁，否则人会用 --no-verify 绕过。
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+fail=0
+
+# 1) 敏感文件不得入库
+staged=$(git diff --cached --name-only --diff-filter=ACM || true)
+if [ -n "$staged" ]; then
+  while IFS= read -r f; do
+    case "$f" in
+      *.env|*.env.local|*.pem|*.key|*.p12|*id_rsa*|*id_ed25519*)
+        echo "❌ [pre-commit] 禁止提交敏感文件：$f"
+        fail=1
+        ;;
+    esac
+    case "$f" in
+      *node_modules/*|dist/*|dist-release/*)
+        echo "❌ [pre-commit] 禁止提交构建产物：$f"
+        fail=1
+        ;;
+    esac
+  done <<< "$staged"
+fi
+
+# 2) 暂存内容里的硬编码密钥（粗筛，宁可漏也不误伤）
+if [ -n "$staged" ]; then
+  hits=$(git diff --cached -U0 | grep -E '^\+.*(AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|sk-[A-Za-z0-9]{20,})' || true)
+  if [ -n "$hits" ]; then
+    echo "❌ [pre-commit] 疑似硬编码密钥："
+    echo "$hits" | head -5
+    fail=1
+  fi
+fi
+
+# 3) 编码与 BOM（无 node 时跳过，不阻塞）
+if command -v node >/dev/null 2>&1; then
+  [ -f scripts/check-encoding.mjs ] && node scripts/check-encoding.mjs || fail=1
+  [ -f scripts/check-json-bom.mjs ] && node scripts/check-json-bom.mjs || fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "提交被拦下。修完再提交；不要用 --no-verify 绕过。"
+  exit 1
+fi
+exit 0

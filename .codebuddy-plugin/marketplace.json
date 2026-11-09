@@ -1,0 +1,22 @@
+{
+  "name": "ironlaw",
+  "description": "IronLaw（铁律）：把工程纪律变成机器的 Skill 套件。改动纪律、门禁工程、变更档案、上线闭环、项目脚手架五段一体。",
+  "owner": {
+    "name": "IronLaw",
+    "url": "https://github.com/"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "license": "MIT",
+    "language": ["zh-CN", "en"]
+  },
+  "plugins": [
+    {
+      "name": "ironlaw",
+      "description": "IronLaw 全套：1 个总入口技能 + 5 个分域技能 + 6 个斜杠命令 + 3 个可直接运行的校验工具。",
+      "source": "./plugins/ironlaw",
+      "category": "engineering-discipline",
+      "version": "1.0.0"
+    }
+  ]
+}

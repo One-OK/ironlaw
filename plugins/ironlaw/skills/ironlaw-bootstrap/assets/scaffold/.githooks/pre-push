@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# pre-push：拦「推出去就收不回」的问题。
+#   · 提交信息缺三段 → 拒推
+#   · 多包版本号不一致 → 拒推
+#   · 落后远端 → 提醒先合并（不自动 rebase，rebase 会改写 sha）
+#   · PREPUSH_FULL=1 → 额外跑全量门禁
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+fail=0
+
+# 1) 提交信息三段
+if command -v node >/dev/null 2>&1 && [ -f scripts/check-commit-discipline.mjs ]; then
+  node scripts/check-commit-discipline.mjs || fail=1
+fi
+
+# 2) 多包版本一致
+if command -v node >/dev/null 2>&1; then
+  versions=$(node -e '
+    const fs=require("fs");
+    const files=["package.json","apps/web/package.json","apps/api/package.json"].filter(f=>fs.existsSync(f));
+    const v=files.map(f=>[f,JSON.parse(fs.readFileSync(f,"utf8")).version]);
+    const uniq=[...new Set(v.map(x=>x[1]))];
+    if(uniq.length>1){console.log(v.map(x=>x[0]+"="+x[1]).join(" , "));process.exit(1);}
+    console.log(uniq[0]||"(none)");
+  ' 2>&1) || { echo "❌ [pre-push] 版本号不一致：$versions"; fail=1; }
+fi
+
+# 3) 是否落后远端（只提醒，不阻断——落后但可快进时由推送脚本处理）
+if git rev-parse --abbrev-ref '@{u}' >/dev/null 2>&1; then
+  behind=$(git rev-list --count 'HEAD..@{u}' 2>/dev/null || echo 0)
+  if [ "${behind:-0}" -gt 0 ]; then
+    echo "⚠️  [pre-push] 落后远端 ${behind} 个提交 —— 先合并（快进优先），不要 force push"
+    fail=1
+  fi
+fi
+
+# 4) 可选全量门禁
+if [ "${PREPUSH_FULL:-0}" = "1" ] && [ -f scripts/check-all.mjs ]; then
+  echo "[pre-push] PREPUSH_FULL=1，运行全量门禁..."
+  node scripts/check-all.mjs || fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "推送被拦下。修完再推；不要用 --no-verify 绕过，也不要用 force。"
+  exit 1
+fi
+echo "[pre-push] OK"
+exit 0

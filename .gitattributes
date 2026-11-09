@@ -1,0 +1,6 @@
+# 全仓文本统一 LF，二进制显式声明
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.zip binary
+*.gz binary
