@@ -2,8 +2,8 @@
   "name": "ironlaw",
   "description": "IronLaw（铁律）：把工程纪律变成机器的 Skill 套件。改动纪律、门禁工程、变更档案、上线闭环、项目脚手架五段一体。",
   "owner": {
-    "name": "IronLaw",
-    "url": "https://github.com/"
+    "name": "One-OK",
+    "url": "https://github.com/One-OK"
   },
   "metadata": {
     "version": "1.0.0",

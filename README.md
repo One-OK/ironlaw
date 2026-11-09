@@ -2,6 +2,8 @@
 
 **把工程纪律变成机器。**
 
+`https://github.com/One-OK/ironlaw`
+
 一套 WorkBuddy Skill 套件。解决一个具体问题：
 
 > AI 和人都能很快写出「看起来对」的代码，但没人能证明它真的对。
