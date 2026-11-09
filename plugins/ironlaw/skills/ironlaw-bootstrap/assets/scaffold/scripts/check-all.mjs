@@ -42,8 +42,8 @@ if (only) {
   const n = Number(only);
   steps = steps.filter((s) => s.idx === n);
   if (!steps.length) {
-    console.error(`没有第 ${n} 步（共 ${STEPS.length} 步）`);
-    process.exit(EXIT.PRODUCT);
+    console.error(`没有第 ${n} 步（共 ${STEPS.length} 步）——参数错误按设施错误处理，退出 2`);
+    process.exit(EXIT.STOP);
   }
 }
 
@@ -66,16 +66,23 @@ for (const step of steps) {
   const out = `${r.stdout || ''}${r.stderr || ''}`;
 
   if (r.status === null) {
+    // 超时/被杀是设施错误，不是判据失败 —— 按自己的纪律退出 2，不与产品红混在一起
     console.log(`⏱ 超时/中断 (${(ms / 1000).toFixed(1)}s)`);
     lines.push(`\n[${step.idx}] ${step.name} — 超时/中断 (${ms}ms)`);
     lines.push('↳ 进程未正常退出（可能是超时被杀或资源不足），不等同于判据失败');
-    failures.push({ step, reason: '超时/中断', lines: ['↳ 进程未正常退出'] });
+    failures.push({ step, reason: '超时/中断', kind: 'facility', lines: ['↳ 进程未正常退出'] });
     continue;
   }
 
   if (r.status === 0) {
     console.log(`✅ (${(ms / 1000).toFixed(1)}s)`);
     lines.push(`\n[${step.idx}] ${step.name} — PASS (${ms}ms)`);
+  } else if (r.status === EXIT.STOP) {
+    // 子步自报设施错误（exit 2）：向上传播，不伪装成产品红
+    console.log(`⚙ 设施错误 (${(ms / 1000).toFixed(1)}s, exit=2)`);
+    lines.push(`\n[${step.idx}] ${step.name} — 设施错误 (exit=2)`);
+    lines.push('↳ 子步骤自报配置/设施错误（exit 2），先归因，别当产品缺陷修');
+    failures.push({ step, reason: '设施错误(exit=2)', kind: 'facility', lines: ['↳ 子步骤自报设施错误'] });
   } else {
     console.log(`❌ 失败 (${(ms / 1000).toFixed(1)}s, exit=${r.status})`);
     const bad = failureLines(out).slice(0, 20);
@@ -83,24 +90,28 @@ for (const step of steps) {
     for (const l of bad) lines.push(`  ↳ ${l}`);
     lines.push('  --- 输出尾部 40 行 ---');
     lines.push(...out.trim().split('\n').slice(-40).map((l) => `  | ${l}`));
-    failures.push({ step, reason: `exit=${r.status}`, lines: bad });
+    failures.push({ step, reason: `exit=${r.status}`, kind: 'product', lines: bad });
   }
 }
 
 const total = ((Date.now() - t0) / 1000).toFixed(1);
-const code = failures.length ? EXIT.PRODUCT : EXIT.PASS;
+// 退出码语义：产品红优先 1；只有设施类失败时 2；全绿 0
+const productFailures = failures.filter((f) => f.kind === 'product');
+const facilityFailures = failures.filter((f) => f.kind === 'facility');
+const code = productFailures.length ? EXIT.PRODUCT
+  : (facilityFailures.length ? EXIT.STOP : EXIT.PASS);
 
 lines.push('');
 if (!failures.length) {
   console.log(`\n✅ 全部通过（${total}s）。${steps.length}/${steps.length}`);
   lines.push(`✅ 全部通过（${total}s）。${steps.length}/${steps.length}`);
 } else {
-  console.error(`\n❌ ${failures.length}/${steps.length} 步失败（${total}s）：`);
+  console.error(`\n❌ ${failures.length}/${steps.length} 步失败（${total}s；产品类 ${productFailures.length}，设施类 ${facilityFailures.length}）：`);
   for (const f of failures) {
-    console.error(`  - [${f.step.idx}] ${f.step.name}：${f.reason}`);
+    console.error(`  - [${f.step.idx}] ${f.step.name}：${f.reason}${f.kind === 'facility' ? '（设施类：先归因，别当产品缺陷修）' : ''}`);
     for (const l of f.lines.slice(0, 6)) console.error(`      ${l}`);
   }
-  lines.push(`❌ ${failures.length}/${steps.length} 步失败（${total}s）`);
+  lines.push(`❌ ${failures.length}/${steps.length} 步失败（产品类 ${productFailures.length}，设施类 ${facilityFailures.length}）`);
 }
 
 // 哨兵：必须是独立一行

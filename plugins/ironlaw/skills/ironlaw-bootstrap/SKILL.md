@@ -43,13 +43,17 @@ git commit --allow-empty -m "update stuff" && bash .githooks/pre-push; echo $?
 | 文件 | 作用 |
 |---|---|
 | `.githooks/pre-commit` | 敏感文件/构建产物/硬编码密钥/编码/BOM，秒级 |
-| `.githooks/pre-push` | 提交信息三段/多包版本一致/落后远端/可选全量门禁 |
+| `.githooks/pre-push` | 提交信息三段（整个推送区间）/多包版本一致/落后远端/**档案校验**（`PREPUSH_RECORDS=0` 可关）/可选全量门禁 |
 | `scripts/check-encoding.mjs` | UTF-8 无乱码（U+FFFD） |
 | `scripts/check-json-bom.mjs` | JSON 无 BOM（BOM 会让 JSON.parse 崩） |
 | `scripts/check-commit-discipline.mjs` | 提交信息三段，行首匹配 |
 | `scripts/check-guards.mjs` | 注册守卫 + 聚合执行 |
-| `scripts/check-all.mjs` | 全量入口，落日志 + `EXIT=` 哨兵 |
+| `scripts/check-all.mjs` | 全量入口，落日志 + `EXIT=` 哨兵；超时/设施错误退出 2，与产品红分开 |
+| `scripts/verify-record.mjs` | 变更档案断言校验器（`ironlaw-record` 同源工具，随仓库分发） |
+| `scripts/safe-push.sh` | 安全推送：对账 → 快进合并 → 推送 → 三判据，永不 force |
+| `scripts/bump-version.mjs` | 多包版本同步 bump（文本替换保格式；缺键 fail-closed） |
 | `scripts/lib/gate-runner.mjs` | 失败行抽取/EXIT 码/哨兵，**唯一真源** |
+| `.github/workflows/ci.yml.example` | 可选 CI：改名 `ci.yml` 才启用，只跑门禁不部署 |
 | `docs/CHANGE-DISCIPLINE.md` | 仓库内可执行摘要 |
 | `AGENTS.md` | 项目规范模板（需填实） |
 | `ship.json.example` | 上线真值核验配置 |
@@ -65,6 +69,9 @@ repo/
 │   ├── check-all.mjs                   # 全量入口（步骤表）
 │   ├── check-guards.mjs                # 注册表 + 聚合
 │   ├── check-*.mjs                     # 各专项守卫
+│   ├── verify-record.mjs               # 档案断言校验
+│   ├── safe-push.sh                    # 安全推送 + 三判据
+│   ├── bump-version.mjs                # 多包同 bump
 │   └── lib/
 │       ├── gate-runner.mjs             # 失败行/EXIT/哨兵（单一真源）
 │       └── <domain-scope>.mjs          # 跨脚本共用的判定口径
@@ -80,7 +87,7 @@ repo/
 
 | 阶段 | 加什么 | 触发条件 |
 |---|---|---|
-| 第 1 天 | 上面这 13 个文件 | 建仓 |
+| 第 1 天 | 上面这 18 个文件 | 建仓 |
 | 第 1 周 | 类型检查 + 单测 + 构建进 `check-all` 的 STEPS | 有了第一个可跑的测试 |
 | 第 1 月 | 契约检查、禁用词、死代码、权限基线 | 出现第一次"两边不一致" |
 | 之后 | **每次事故加一条** | 复盘第 3 问的答案 |
@@ -122,6 +129,6 @@ bash .githooks/pre-push（合格消息）        → exit 0
 
 ## 资源
 
-- `scripts/init-project.mjs` — 幂等安装器（已实测：空仓库 → 13 文件 → 门禁 EXIT=0 → 钩子拦截）
+- `scripts/init-project.mjs` — 幂等安装器（已实测：空仓库 → 18 文件 → 门禁 EXIT=0 → 钩子拦截；以 `scripts/smoke.mjs` A 组为机器可查凭证）
 - `assets/scaffold/` — 全部骨架文件（可直接读改）
 - `references/rollout.md` — 渐进落地路线与"什么时候该加门禁"

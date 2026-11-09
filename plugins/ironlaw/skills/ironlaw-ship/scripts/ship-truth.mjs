@@ -66,6 +66,10 @@ function getPath(obj, p) {
 }
 
 async function fetchJson(url, timeoutMs = 15000) {
+  if (typeof fetch !== 'function') {
+    // Node < 18 没有全局 fetch：明确报「取不到真值」，不许崩栈或冒充通过
+    return { status: 0, json: null, text: '', error: '当前 Node 没有全局 fetch（需要 Node ≥ 18），无法核验线上真值' };
+  }
   const ac = new AbortController();
   const t = setTimeout(() => ac.abort(), timeoutMs);
   try {
@@ -105,8 +109,14 @@ async function main() {
   const results = [];
   const add = (id, label, state, detail) => results.push({ id, label, state, detail });
 
-  // ① 版本一致
-  const vf = (cfg.versionFiles || ['package.json']).filter((f) => existsSync(path.resolve(cwd, f)));
+  // ① 版本一致（fail-closed：配置里写了但磁盘上不存在的文件，必须显式暴露，
+  //    不许静默丢弃 —— 否则清单漂移会让「N 处一致」悄悄缩水成「1 处一致」）
+  const allVf = cfg.versionFiles || ['package.json'];
+  const missingVf = allVf.filter((f) => !existsSync(path.resolve(cwd, f)));
+  const vf = allVf.filter((f) => existsSync(path.resolve(cwd, f)));
+  if (missingVf.length) {
+    add('version', '版本文件齐全', 'UNKNOWN', `配置了但磁盘上不存在：${missingVf.join(' , ')}（改配置或补文件，不许静默放过）`);
+  }
   if (!vf.length) {
     add('version', '版本一致', 'UNKNOWN', '一个版本文件都不存在，无法判定');
   } else {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IronLaw — Turn engineering discipline into machinery</title>
-<meta name="description" content="IronLaw is a WorkBuddy skill suite that turns &quot;this change is trustworthy&quot; into gates, assertions and four-source truth checks. 6 skills, 3 dependency-free tools, MIT.">
+<meta name="description" content="IronLaw is a WorkBuddy skill suite that turns &quot;this change is trustworthy&quot; into gates, assertions and four-source truth checks. 6 skills, 4 dependency-free tools, MIT.">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#FAF9F6">
 <meta property="og:type" content="website">
@@ -283,7 +283,7 @@
       <a class="brand" href="en.html" aria-label="IronLaw home">
         <span class="mark" aria-hidden="true"><i></i></span>
         <b>IronLaw</b>
-        <span class="chip">v1.0.1</span>
+        <span class="chip">v1.1.0</span>
       </a>
       <nav class="nav-links" aria-label="Main">
         <a href="#problem">Problem</a>
@@ -310,7 +310,7 @@
           &mdash; turning every judgment into something a machine can check: gates, assertions, truth verification.
         </p>
         <div class="cta" data-reveal style="--i:2">
-          <a class="btn btn-solid btn-lg" href="https://github.com/One-OK/ironlaw/releases/download/v1.0.1/ironlaw-1.0.1.zip">Download v1.0.1</a>
+          <a class="btn btn-solid btn-lg" href="https://github.com/One-OK/ironlaw/releases/download/v1.1.0/ironlaw-1.1.0.zip">Download v1.1.0</a>
           <a class="btn btn-lg" href="#proof">See it catch a bug</a>
           <span class="cta-note">Zero dependencies · readable without installing</span>
         </div>
@@ -524,7 +524,7 @@
       <div class="wrap">
         <div class="sec-head" data-reveal>
           <span class="sec-num">05 / THE TOOLS</span>
-          <h2>Three tools you can run, not examples</h2>
+          <h2>Four tools you can run, not examples</h2>
           <p>Plain Node, no third-party dependencies. Every output above came out of them.</p>
         </div>
 
@@ -548,6 +548,15 @@
             </div>
           </div>
           <div class="tool" data-reveal style="--i:2">
+            <div class="tool-top">
+              <code>impact-scope.mjs</code>
+              <span>Impact-chain scope keys: diff &rarr; keys &rarr; check each against assertions &amp; reasons, naming every missed key (machine side of law 4)</span>
+            </div>
+            <div class="cmd">
+              <code>node plugins/ironlaw/skills/ironlaw-record/scripts/impact-scope.mjs --base &lt;ref&gt; --record docs/change-records/xxx.md</code>
+            </div>
+          </div>
+          <div class="tool" data-reveal style="--i:3">
             <div class="tool-top">
               <code>ship-truth.mjs</code>
               <span>Four sources of truth: local, remote, live, artifact. Any mismatch means it is not shipped</span>
@@ -612,7 +621,7 @@
         </nav>
       </div>
       <div class="sign">
-        <span>MIT &copy; 2026 IronLaw · v1.0.1</span>
+        <span>MIT &copy; 2026 IronLaw · v1.1.0</span>
         <strong>If an assertion is red, fix the code.</strong>
       </div>
     </div>

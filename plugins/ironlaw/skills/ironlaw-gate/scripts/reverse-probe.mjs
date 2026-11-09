@@ -19,8 +19,12 @@
  *       { "label": "判据改成永远通过", "file": "scripts/check-x.mjs", "find": "ok = evaluate(rows);", "replace": "ok = true;" }
  *     ],
  *     "cmd": "node scripts/check-x.mjs",
- *     "expectHits": 1
+ *     "expectHits": 1,
+ *     "timeoutMs": 120000
  *   }
+ *
+ *   超时：守卫命令超过 timeoutMs（可被案例级 timeoutMs 覆盖）被杀 →
+ *   按设施错误处理（退出 2，结论作废），既不算「转红」也不算「通过」。
  *
  * 用法 B（命令行单案例）：
  *   node reverse-probe.mjs --file src/a.ts --find "OLD" --replace "NEW" \
@@ -29,7 +33,7 @@
  * 退出码：
  *   0 = 全部案例「变异后转红」且「复原后逐字节一致」
  *   1 = 有案例变异后仍然通过（假守护），或复原后 md5 不一致
- *   2 = 配置/环境错误（找不到文件、find 命中数不符、命令不存在）
+ *   2 = 配置/环境错误（找不到文件、find 命中数不符、命令不存在、守卫命令超时）
  *
  * 铁律：不许用「反向字符串替换」复原。必须用快照 + md5 比对，否则你以为复原了，
  *       实际留下了空白/行尾/编码污染。
@@ -80,13 +84,14 @@ function applyMutation(src, find, replace, expectHits, label) {
   return src.split(find).join(replace);
 }
 
-function runCmd(cmd, cwd) {
+function runCmd(cmd, cwd, timeoutMs) {
   const r = spawnSync(cmd, {
     cwd,
     shell: true,
     stdio: ['ignore', 'pipe', 'pipe'],
     env: process.env,
     maxBuffer: 64 * 1024 * 1024,
+    timeout: Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : undefined,
   });
   const out = `${r.stdout || ''}${r.stderr || ''}`;
   return {
@@ -95,6 +100,8 @@ function runCmd(cmd, cwd) {
     out,
     // spawn 失败（命令不存在等）不等于「判据转红」，必须区分
     spawnFailed: !!r.error || r.status === null,
+    // 超时被杀是设施错误：不判定为转红（也没资格判通过），单独归类
+    timedOut: r.status === null && !!r.error && r.error.code === 'ETIMEDOUT',
   };
 }
 
@@ -125,6 +132,7 @@ function main() {
 
   const defaultCmd = config.cmd;
   const expectHits = Number.isFinite(Number(config.expectHits)) ? Number(config.expectHits) : 1;
+  const defaultTimeout = Number.isFinite(Number(config.timeoutMs)) ? Number(config.timeoutMs) : 120_000;
   const cases = Array.isArray(config.cases) ? config.cases : [];
   if (!cases.length) die('cases 为空：没有任何变异案例可跑');
 
@@ -133,8 +141,8 @@ function main() {
   if (!baselineCmd) die('缺少 cmd（守卫的运行命令）');
 
   console.log(`[reverse-probe] 根目录 ${cwd}`);
-  console.log(`[reverse-probe] 基线命令：${baselineCmd}`);
-  const baseline = runCmd(baselineCmd, cwd);
+  console.log(`[reverse-probe] 基线命令：${baselineCmd}（超时预算 ${defaultTimeout}ms）`);
+  const baseline = runCmd(baselineCmd, cwd, config.baselineTimeoutMs ?? defaultTimeout);
   if (baseline.spawnFailed) {
     die(`基线命令无法执行（不是判据失败）：${baseline.error || 'status=null'}\n${baseline.out.slice(-800)}`);
   }
@@ -146,6 +154,7 @@ function main() {
   console.log('[reverse-probe] 基线通过 ✓\n');
 
   let failures = 0;
+  let facilityTimeout = false; // 守卫命令超时 = 设施错误：结论作废（退出 2），不许算「转红」也不许算「通过」
   const touched = new Map(); // absPath -> { original: Buffer, hash }
 
   // 任何路径异常都要复原，避免留下污染
@@ -170,7 +179,7 @@ function main() {
   process.on('SIGTERM', () => onSignal('SIGTERM'));
 
   try {
-    cases.forEach((c, i) => {
+    for (const [i, c] of cases.entries()) {
       const label = c.label || `案例 ${i + 1}`;
       const relFile = c.file || config.file;
       if (!relFile) die(`案例「${label}」未指定 file`);
@@ -193,7 +202,8 @@ function main() {
 
       writeFileSync(abs, mutated, 'utf8');
       const cmd = c.cmd || defaultCmd;
-      const r = runCmd(cmd, cwd);
+      const caseTimeout = Number.isFinite(Number(c.timeoutMs)) ? Number(c.timeoutMs) : defaultTimeout;
+      const r = runCmd(cmd, cwd, caseTimeout);
 
       // 立刻复原这一份（不等循环结束）
       writeFileSync(abs, rec.original);
@@ -202,7 +212,12 @@ function main() {
       const restoredOk = after === rec.hash;
       const turnedRed = !r.spawnFailed && r.status !== 0;
 
-      if (r.spawnFailed) {
+      if (r.timedOut) {
+        console.log(`  ⏱ ${label}：守卫命令超时/被杀（预算 ${caseTimeout}ms）—— 设施错误，结论作废`);
+        console.log('     先修环境或调 timeoutMs（配置可写 config.timeoutMs / 案例 timeoutMs），不许把超时当转红或通过。');
+        facilityTimeout = true;
+        break;
+      } else if (r.spawnFailed) {
         console.log(`  ✗ ${label}：命令无法执行（配置问题，不能算转红）`);
         console.log(`     ${r.error || 'status=null'}`);
         failures++;
@@ -219,11 +234,15 @@ function main() {
         console.log(`  ✓ ${label}：转红（exit=${r.status}）且复原一致`);
         if (firstRed) console.log(`     首个红行：${firstRed.trim().slice(0, 160)}`);
       }
-    });
+    }
   } finally {
     restoreAll();
   }
 
+  if (facilityTimeout) {
+    console.log('\n[reverse-probe] FAIL：设施超时 —— 本次探针没有结论（既不证明转红，也不证明通过）');
+    process.exit(EXIT.SETUP);
+  }
   if (failures) {
     console.log(`\n[reverse-probe] FAIL：${failures} 个案例不合格`);
     process.exit(EXIT.FAIL);

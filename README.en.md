@@ -21,7 +21,7 @@ IronLaw does not make you type faster. It makes the phrase "this change is trust
 | `ironlaw-ship` | Ship closure: push → package → deploy → verify live truth → ledger |
 | `ironlaw-bootstrap` | Project scaffold: hooks, guards, shared modules, doc templates for a new repo |
 
-Plus **6 slash commands** and **3 zero-dependency Node tools**.
+Plus **6 slash commands** and **4 zero-dependency Node tools**.
 
 ## The four iron laws
 
@@ -55,7 +55,7 @@ You do not run all five every time:
 
 ## Install
 
-No need to clone: grab the release package **[ironlaw-1.0.1.zip](https://github.com/One-OK/ironlaw/releases/download/v1.0.1/ironlaw-1.0.1.zip)** (122 KB), unzip it, then run `node scripts/install.mjs`.
+No need to clone: grab the release package **[ironlaw-1.1.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.1.0/ironlaw-1.1.0.zip)**, unzip it, then run `node scripts/install.mjs`.
 
 ```bash
 node scripts/install.mjs
@@ -93,7 +93,7 @@ When unsure, use the router:
 /ironlaw
 ```
 
-## The three tools
+## The four tools
 
 Not samples — working code, no third-party dependencies.
 
@@ -104,9 +104,14 @@ node plugins/ironlaw/skills/ironlaw-gate/scripts/reverse-probe.mjs --config prob
 # Execute a change record's §2.5 assertion table, report every row
 node plugins/ironlaw/skills/ironlaw-record/scripts/verify-record.mjs docs/change-records/xxx.md
 
+# Impact-chain scope keys: diff → keys → check each against assertions & reasons (machine side of law 4)
+node plugins/ironlaw/skills/ironlaw-record/scripts/impact-scope.mjs --base <ref> --record docs/change-records/xxx.md
+
 # Four-way truth check: local / remote / live / distributed
 node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.json
 ```
+
+There is also `scripts/smoke.mjs`: an end-to-end smoke test (22 checks) that reproduces every "verified" claim from the changelog on any machine.
 
 ## Docs
 

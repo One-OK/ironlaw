@@ -55,11 +55,11 @@ agent_created: true
 | 3 | 深链走真实路由 | `\$\{base\}/leads/\$\{leadId\}` | apps/api/src/assignment | =1 |
 ```
 
-**期望只有三种**，不发明第四种：
+**期望只有三种算子**（校验器只接受这三种，裸数字按 `=N` 处理），不发明第四种：
 
 - `>=N` —— 必须存在且达到规模（防"只改了一个"）
-- `=N` —— 精确计数（唯一出口、唯一路由）
-- `=0` —— 零残留（删干净、禁词清零）
+- `=N` —— 精确计数（唯一出口、唯一路由）；`=0` 是 `N=0` 的特例：零残留（删干净、禁词清零）
+- `<=N` —— 上限断言（防增殖：待接入点、白名单条目只减不增）
 
 ### 三条硬要求
 
@@ -113,6 +113,8 @@ node scripts/verify-record.mjs docs/change-records/<file>.md
 node scripts/verify-record.mjs --latest docs/change-records
 ```
 
+`scripts/verify-record.mjs` 已随 `ironlaw-bootstrap` 脚手架铺进项目（与本技能内的是同一份工具）；没有脚手架的仓库用技能目录里的路径跑。断言「范围」相对仓库根解析——从子目录跑会整批「范围不存在」判红，这是故意的；确需指定时用 `--root <仓库根>`。
+
 校验器会：
 
 1. 检查七段齐全（缺段判红）
@@ -123,6 +125,16 @@ node scripts/verify-record.mjs --latest docs/change-records
 退出码 0 通过 / 1 不合格 / 2 参数错误。
 
 > 只检查"有没有写 §2.5"的门禁，会被一行占位表格骗过去。必须执行它。
+
+## 覆盖闭环（铁律四的机器侧）
+
+断言表只证明「写下的断言成立」，不证明「没有漏键」。用 `impact-scope.mjs` 把另一半也交给机器：
+
+```bash
+node <skill>/scripts/impact-scope.mjs --base HEAD~1 --record docs/change-records/<file>.md
+```
+
+它从 diff 机器算出本次触及的范围键，逐键对照 §2.5 的断言范围与 §2.6 的理由；漏掉的键点名，退出 1。脚手架的 pre-push 已挂 `verify-record`（存在 `docs/change-records/` 即校验最新档案，`PREPUSH_RECORDS=0` 关闭）。
 
 ## 反模式
 
@@ -137,7 +149,8 @@ node scripts/verify-record.mjs --latest docs/change-records
 
 ## 资源
 
-- `scripts/verify-record.mjs` — 档案校验器（已实测：真实档案 14/14 通过；缺段/断言不成立/空表/范围不存在均判红）
+- `scripts/verify-record.mjs` — 档案校验器（脚手架会把它铺进项目的 `scripts/`；缺段/断言不成立/空表/范围不存在均判红）
+- `scripts/impact-scope.mjs` — 影响链范围键计算器：diff → 范围键 → 逐键对照 §2.5/§2.6，漏键点名（铁律四的机器侧）
 - `assets/change-record-template.md` — 七段骨架
 - `assets/commit-msg-template.txt` — 三段提交信息模板
 - `references/record-spec.md` — 逐段要求与正反例

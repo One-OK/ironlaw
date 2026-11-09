@@ -29,7 +29,7 @@ IronLaw 不提升写代码的速度，它提升的是**「这次改动可信」�
 | `ironlaw-ship` | 上线闭环：推送 → 出包 → 部署 → 线上真值核验 → 台账 |
 | `ironlaw-bootstrap` | 项目脚手架：给新仓库一次性铺钩子、门禁、共享件、文档 |
 
-外加 **6 个斜杠命令** 和 **3 个零依赖的 Node 工具**。
+外加 **6 个斜杠命令** 和 **4 个零依赖的 Node 工具**。
 
 ## 四条铁律
 
@@ -61,7 +61,7 @@ IronLaw 不提升写代码的速度，它提升的是**「这次改动可信」�
 - 只加门禁 → ②③④
 - 新项目 → ①，等第一次真实改动再走 ②
 
-## 三个能跑的工具
+## 四个能跑的工具
 
 不是示例，是能直接用的东西。无第三方依赖。
 
@@ -72,13 +72,18 @@ node plugins/ironlaw/skills/ironlaw-gate/scripts/reverse-probe.mjs --config prob
 # 执行变更档案的 §2.5 断言表，逐条报告
 node plugins/ironlaw/skills/ironlaw-record/scripts/verify-record.mjs docs/change-records/xxx.md
 
+# 影响链范围键：diff → 范围键 → 逐键对照断言与理由，漏键点名（铁律四的机器侧）
+node plugins/ironlaw/skills/ironlaw-record/scripts/impact-scope.mjs --base <基线> --record docs/change-records/xxx.md
+
 # 四方真值核验：本地 / 远端 / 线上 / 分发
 node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.json
 ```
 
+另外还有 `scripts/smoke.mjs`：发行包的端到端冒烟测试，22 项声明在任意机器上可复现。
+
 ## 安装
 
-不想 clone 仓库的话，直接下发行包：**[ironlaw-1.0.1.zip](https://github.com/One-OK/ironlaw/releases/download/v1.0.1/ironlaw-1.0.1.zip)**（122 KB），解压后同样跑 `node scripts/install.mjs`。
+不想 clone 仓库的话，直接下发行包：**[ironlaw-1.1.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.1.0/ironlaw-1.1.0.zip)**，解压后同样跑 `node scripts/install.mjs`。
 
 ### 方式一：一键装进 WorkBuddy（推荐）
 
@@ -147,7 +152,7 @@ node plugins/ironlaw/skills/ironlaw-bootstrap/scripts/init-project.mjs /path/to/
 
 ```bash
 cp plugins/ironlaw/skills/ironlaw-gate/assets/guard-skeleton.mjs scripts/check-<topic>.mjs
-# 改三处：evaluate / ROOTS / covers
+# 通常只改 RULES 数组；判据结构特殊时再改 evaluate()
 ```
 
 ## 文档

@@ -1,17 +1,47 @@
 #!/usr/bin/env bash
 # pre-push：拦「推出去就收不回」的问题。
-#   · 提交信息缺三段 → 拒推
+#   · 提交信息缺三段 → 拒推（校验**整个推送区间**，不只 HEAD）
 #   · 多包版本号不一致 → 拒推
 #   · 落后远端 → 提醒先合并（不自动 rebase，rebase 会改写 sha）
+#   · docs/change-records/ 有档案 → 校验最新一份（PREPUSH_RECORDS=0 关闭）
 #   · PREPUSH_FULL=1 → 额外跑全量门禁
+#
+# git 会从 stdin 传「本地引用 本地sha 远端引用 远端sha」；手工直接跑本钩子
+# （无 stdin）时只校验 HEAD —— 脚手架验收就是这么测的。
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 fail=0
 
-# 1) 提交信息三段
+# 1) 提交信息三段 —— 覆盖整个推送区间
 if command -v node >/dev/null 2>&1 && [ -f scripts/check-commit-discipline.mjs ]; then
-  node scripts/check-commit-discipline.mjs || fail=1
+  shas=""
+  if [ ! -t 0 ]; then
+    # stdin 不是终端（git 钩子调用 / 管道 / 重定向）才读取，交互式直接跑不挂住。
+    # 不显式重定向 /dev/stdin：MSYS2/Git Bash 的管道 stdin 下它可能不存在，直接继承即可
+    while read -r _lref lsha _rref rsha; do
+      [ -n "${lsha:-}" ] || continue
+      case "$lsha" in *[!0-9a-f]*|"0000000000000000000000000000000000000000") continue ;; esac  # 全零 = 删除分支
+      if [ "${rsha:-}" = "0000000000000000000000000000000000000000" ]; then
+        # 新分支：无法从远端 sha 界定区间（历史里可能有未做三段的旧提交），
+        # 退化为只查 HEAD，并明确说明——不静默装作查过全部
+        echo "⚠️  [pre-push] 新分支首次推送，无法界定区间，只校验 HEAD"
+        shas="$shas $(git rev-parse HEAD)"
+        continue
+      fi
+      shas="$shas $(git rev-list "$rsha..$lsha" 2>/dev/null || true)"
+    done || true
+  fi
+  shas=$(echo "$shas" | tr ' ' '\n' | awk 'NF' | sort -u)
+  if [ -z "$shas" ]; then
+    shas=$(git rev-parse HEAD)   # 手工执行钩子（无 stdin）→ 只查 HEAD
+  fi
+  for sha in $shas; do
+    if ! node scripts/check-commit-discipline.mjs "$sha"; then
+      echo "❌ [pre-push] 提交 $sha 的信息不合格（三段缺失/过短）"
+      fail=1
+    fi
+  done
 fi
 
 # 2) 多包版本一致
@@ -35,7 +65,17 @@ if git rev-parse --abbrev-ref '@{u}' >/dev/null 2>&1; then
   fi
 fi
 
-# 4) 可选全量门禁
+# 4) 变更档案校验（存在档案才校验；PREPUSH_RECORDS=0 关闭）
+if [ "${PREPUSH_RECORDS:-1}" = "1" ] && [ -d docs/change-records ] && ls docs/change-records/*.md >/dev/null 2>&1; then
+  if [ -f scripts/verify-record.mjs ]; then
+    echo "[pre-push] 校验最新变更档案..."
+    node scripts/verify-record.mjs --latest docs/change-records || fail=1
+  else
+    echo "⚠️  [pre-push] docs/change-records 存在但 scripts/verify-record.mjs 缺失——档案未校验，请补装（ironlaw-record 技能）"
+  fi
+fi
+
+# 5) 可选全量门禁
 if [ "${PREPUSH_FULL:-0}" = "1" ] && [ -f scripts/check-all.mjs ]; then
   echo "[pre-push] PREPUSH_FULL=1，运行全量门禁..."
   node scripts/check-all.mjs || fail=1

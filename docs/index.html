@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IronLaw — 把工程纪律变成机器</title>
-<meta name="description" content="IronLaw 是一套 WorkBuddy 技能套件：把「这次改动可信」落成门禁、断言与四方真值核验。6 个技能，3 个零依赖工具，MIT。">
+<meta name="description" content="IronLaw 是一套 WorkBuddy 技能套件：把「这次改动可信」落成门禁、断言与四方真值核验。6 个技能，4 个零依赖工具，MIT。">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#FAF9F6">
 <meta property="og:type" content="website">
@@ -288,7 +288,7 @@
       <a class="brand" href="#top" aria-label="IronLaw 首页">
         <span class="mark" aria-hidden="true"><i></i></span>
         <b>IronLaw</b>
-        <span class="chip">v1.0.1</span>
+        <span class="chip">v1.1.0</span>
       </a>
       <nav class="nav-links" aria-label="主导航">
         <a href="#problem">问题</a>
@@ -317,7 +317,7 @@
           把每一次判断都落成机器能查的东西：门禁、断言、真值核验。
         </p>
         <div class="cta" data-reveal style="--i:2">
-          <a class="btn btn-solid btn-lg" href="https://github.com/One-OK/ironlaw/releases/download/v1.0.1/ironlaw-1.0.1.zip">下载 v1.0.1</a>
+          <a class="btn btn-solid btn-lg" href="https://github.com/One-OK/ironlaw/releases/download/v1.1.0/ironlaw-1.1.0.zip">下载 v1.1.0</a>
           <a class="btn btn-lg" href="#proof">先看它怎么抓错</a>
           <span class="cta-note">零依赖 · 不用装也能读完这页</span>
         </div>
@@ -527,7 +527,7 @@
       <div class="wrap">
         <div class="sec-head" data-reveal>
           <span class="sec-num">05 / THE TOOLS</span>
-          <h2>三个能直接跑的工具，不是示例</h2>
+          <h2>四个能直接跑的工具，不是示例</h2>
           <p>纯 Node，无第三方依赖。上面那些输出，就是它们跑出来的。</p>
         </div>
 
@@ -551,6 +551,15 @@
             </div>
           </div>
           <div class="tool" data-reveal style="--i:2">
+            <div class="tool-top">
+              <code>impact-scope.mjs</code>
+              <span>影响链范围键：diff → 范围键 → 逐键对照断言与理由，漏掉的键点名（铁律四的机器侧）</span>
+            </div>
+            <div class="cmd">
+              <code>node plugins/ironlaw/skills/ironlaw-record/scripts/impact-scope.mjs --base &lt;基线&gt; --record docs/change-records/xxx.md</code>
+            </div>
+          </div>
+          <div class="tool" data-reveal style="--i:3">
             <div class="tool-top">
               <code>ship-truth.mjs</code>
               <span>四方真值核验：本地 / 远端 / 线上 / 分发，四个不一致就不算发版</span>
@@ -615,7 +624,7 @@
         </nav>
       </div>
       <div class="sign">
-        <span>MIT © 2026 IronLaw · v1.0.1</span>
+        <span>MIT © 2026 IronLaw · v1.1.0</span>
         <strong>断言红了就改代码。</strong>
       </div>
     </div>

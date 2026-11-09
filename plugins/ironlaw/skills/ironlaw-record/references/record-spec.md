@@ -1,6 +1,6 @@
 # 七段逐段要求
 
-每一段都有"合格 / 不合格"的判据。不合格的档案会在推送前被拦，或者更糟：被放过，然后在事故复盘时发现它什么都没说明。
+每一段都有"合格 / 不合格"的判据。不合格的档案应该在推送前被拦——`ironlaw-bootstrap` 脚手架的 pre-push 已内置这道闸：存在 `docs/change-records/` 即校验最新档案（`PREPUSH_RECORDS=0` 可关）。没接这道闸的仓库，不合格的档案只有一种更糟的结局：被放过，然后在事故复盘时发现它什么都没说明。
 
 ---
 
@@ -143,7 +143,7 @@ git revert <sha>
 |---|---|---|
 | 类型检查 | `npx tsc --noEmit` | 0 error |
 | 单测 | `npx jest --runInBand` | 412 passed |
-| 全量门禁 | `bash run-gate.sh` | EXIT=0（645s，18/18） |
+| 全量门禁 | `node scripts/check-all.mjs` | EXIT=0（645s，18/18） |
 
 ### 产物指纹
 

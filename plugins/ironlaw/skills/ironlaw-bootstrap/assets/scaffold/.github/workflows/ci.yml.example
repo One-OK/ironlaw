@@ -1,0 +1,23 @@
+# 可选 CI：把全量门禁挂到远端跑。
+# IronLaw 的发布哲学是「部署只在本地执行」（见 AGENTS.md），CI 不负责部署；
+# 它只做一件事：在 push / PR 上重跑全量门禁，防止有人用 --no-verify 绕过本地钩子。
+#
+# 启用方式：把本文件改名为 ci.yml（保留 .example 则不会被 CI 识别，装上来默认关闭）。
+# 慢步骤（构建/单测）加进 scripts/check-all.mjs 的 STEPS 后会自动被这里带到。
+
+name: gate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 全量门禁（末尾必须出现独立一行 EXIT=0）
+        run: node scripts/check-all.mjs

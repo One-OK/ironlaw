@@ -30,9 +30,9 @@ agent_created: true
 ## 七步顺序铁律
 
 ```
-① bump 版本（三处同步，只用脚本，禁止手改）
+① bump 版本（三处同步，只用脚本：脚手架自带 scripts/bump-version.mjs，禁止手改）
 ② commit（三段式提交信息）
-③ push（safe-push，自动 merge + bump + 记账）
+③ push（safe-push：对账 + 快进合并 + 推送 + 三判据；脚手架自带 scripts/safe-push.sh）
 ④ 全量门禁（合并了远端就必须重跑）
 ⑤ 出包 + 上传 + 双核验（旧版本号能拉到新版 / 新版本号 204）
 ⑥ 台账登记（版本 / 基线 / 产物指纹）→ 提交推送
@@ -56,11 +56,11 @@ agent_created: true
 
 ## 推送三判据
 
-推送后必须三条都过，缺一条就不算成功：
+推送后必须三条都过，缺一条就不算成功。优先用脚手架自带的 `scripts/safe-push.sh`（它自动做这三条核对并输出 `PUSH_RC` / `REMOTE_TIP` / `LOCAL_TIP`）；手工推送时逐条核对：
 
 ```bash
 # 1. 单独捕获退出码（不要用管道，$? 会被管道最后一环覆盖）
-bash scripts/safe-push.sh --push-only; RC=$?; echo "PUSH_RC=$RC"
+git push origin HEAD; RC=$?; echo "PUSH_RC=$RC"
 # 2. reflog 确认本地记录的 origin 指针前进
 git reflog show origin/main | head -1
 # 3. 权威真值：远端实际指针
@@ -163,3 +163,4 @@ node scripts/ship-truth.mjs --config ship.json
 - `scripts/ship-truth.mjs` — 四方真值核验（已实测：在真实项目上正确识别出"远端已前进 2 个版本、线上版本不一致"）
 - `references/release-checklist.md` — 逐条勾的上线清单
 - `references/truth-sources.md` — 真值源对照表与取数命令
+- 脚手架配套：`scripts/safe-push.sh`（对账 + 快进合并 + 三判据）与 `scripts/bump-version.mjs`（多包同 bump），由 `ironlaw-bootstrap` 铺进项目

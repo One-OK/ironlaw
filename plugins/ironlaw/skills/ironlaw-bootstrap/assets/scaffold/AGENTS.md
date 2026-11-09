@@ -6,15 +6,15 @@
 ## 0 开工必做
 
 1. **先同步再动手**：`git fetch && git log --oneline HEAD..origin/main`，看清远端有没有前进。
-2. **推送只用安全脚本**，永不 force。
-3. **部署只在本地执行**，不依赖 CI 自动上线。
+2. **推送只用安全脚本**（`bash scripts/safe-push.sh`），永不 force。
+3. **部署只在本地执行**，不依赖 CI 自动上线（CI 只跑门禁，见 `.github/workflows/ci.yml.example`）。
 
 ## 1 项目事实（填实，别留占位）
 
 - 仓库 / 分支：
 - 应用与目录：`apps/web`（前端）｜`apps/api`（后端）｜...
 - 版本真源：根 `package.json` / `apps/web/package.json` / `apps/api/package.json`，三处必须同号
-- 版本 bump：只用 `npm run bump:version`（禁止手改，手改是三处不一致与 BOM 的共同根源）
+- 版本 bump：只用 `node scripts/bump-version.mjs`（禁止手改，手改是三处不一致与 BOM 的共同根源）
 - 包管理器与锁文件：
 - 部署方式：<平台 / 命令>
 - 线上版本接口：`GET <url>` → 字段 `version`

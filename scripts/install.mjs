@@ -13,8 +13,10 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(import.meta.dirname, '..');
+// 不用 import.meta.dirname（Node < 20.11 没有）：低版本会直接 TypeError 崩溃，报错无法理解
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PKG_SKILLS = path.join(ROOT, 'plugins', 'ironlaw', 'skills');
 
 // IronLaw 之前的散装技能名，安装时可归档

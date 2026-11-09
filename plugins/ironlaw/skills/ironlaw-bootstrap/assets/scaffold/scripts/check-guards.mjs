@@ -103,11 +103,16 @@ function main() {
       const out = `${r.stdout || ''}${r.stderr || ''}`;
 
       if (r.status === null) {
-        failures.push({ file: entry.file, phase: phase || '扫描', why: `超时/被中断（${ms}ms）`, lines: ['↳ 进程未正常退出（设施超时），不等同于判据失败'] });
+        failures.push({ file: entry.file, phase: phase || '扫描', kind: 'facility', why: `超时/被中断（${ms}ms）`, lines: ['↳ 进程未正常退出（设施超时），不等同于判据失败'] });
+        continue;
+      }
+      if (r.status === 2) {
+        // 子门禁自报设施/配置错误（exit 2）：单独归类，不与产品红混装
+        failures.push({ file: entry.file, phase: phase || '扫描', kind: 'facility', why: '设施错误(exit=2)', lines: ['↳ 子门禁自报配置/设施错误，先归因，别当产品缺陷修'] });
         continue;
       }
       if (r.status !== 0) {
-        failures.push({ file: entry.file, phase: phase || '扫描', why: `exit=${r.status}`, lines: failureLines(out).slice(0, 12) });
+        failures.push({ file: entry.file, phase: phase || '扫描', kind: 'product', why: `exit=${r.status}`, lines: failureLines(out).slice(0, 12) });
       }
     }
   }
@@ -123,7 +128,10 @@ function main() {
     writeFileSync(path.join(ROOT, '.workbuddy', 'artifacts', 'guards-fail.log'), `${log.join('\n')}\n`, 'utf8');
     console.error(`❌ [guards] ${problems.length + failures.length} 项不合格：`);
     for (const l of log) console.error(l);
-    process.exit(1);
+    // 退出码语义与 check-all 对齐：产品红 1；只有设施类失败时 2（check-all 会把它当设施类继续传播）
+    const productFailures = failures.filter((f) => f.kind === 'product');
+    const facilityFailures = failures.filter((f) => f.kind === 'facility');
+    process.exit(productFailures.length || problems.length ? 1 : (facilityFailures.length ? 2 : 1));
   }
 
   console.log(`[OK] guards：${REGISTRY.length} 条门禁全过（自证 + 扫描）`);

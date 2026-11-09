@@ -26,6 +26,8 @@ if [ -n "$staged" ]; then
 fi
 
 # 2) 暂存内容里的硬编码密钥（粗筛，宁可漏也不误伤）
+#    要更严的扫描可接入 gitleaks（可选，引入第三方依赖，非零依赖主张的一部分）：
+#      command -v gitleaks >/dev/null 2>&1 && gitleaks protect --staged --redact -v || fail=1
 if [ -n "$staged" ]; then
   hits=$(git diff --cached -U0 | grep -E '^\+.*(AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|sk-[A-Za-z0-9]{20,})' || true)
   if [ -n "$hits" ]; then

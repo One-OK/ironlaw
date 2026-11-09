@@ -15,6 +15,10 @@
  *   node verify-record.mjs <record.md>
  *   node verify-record.mjs --latest docs/change-records
  *   node verify-record.mjs <record.md> --json
+ *   node verify-record.mjs <record.md> --root <仓库根>
+ *
+ * 范围解析：断言表里的「范围」相对 --root 解析（默认当前工作目录，
+ *   通常应为仓库根——从子目录跑会整批「范围不存在」，这是故意的 fail-closed）。
  *
  * 退出码：0 通过 / 1 档案不合格 / 2 参数或文件错误
  */
@@ -45,6 +49,7 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--latest') { o.latest = argv[++i]; }
+    else if (a === '--root') o.root = argv[++i];
     else if (a === '--json') o.json = true;
     else o._.push(a);
   }
@@ -157,7 +162,7 @@ function main() {
   if (!existsSync(abs)) die(`档案不存在：${abs}`);
 
   const md = readFileSync(abs, 'utf8');
-  const root = process.cwd();
+  const root = path.resolve(args.root || process.cwd());
   const problems = [];
   const notes = [];
 

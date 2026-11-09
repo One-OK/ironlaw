@@ -53,15 +53,16 @@ agent_created: true
 
 细节与反例见 `ironlaw-change/references/iron-laws.md`。
 
-## 三个可直接跑的工具
+## 四个可直接跑的工具
 
 | 工具 | 位置 | 干什么 |
 |---|---|---|
 | `reverse-probe.mjs` | `ironlaw-gate/scripts/` | 反向变异：改坏 → 必须转红 → md5 复原 |
 | `verify-record.mjs` | `ironlaw-record/scripts/` | 执行档案 §2.5 断言表，逐条报告 |
+| `impact-scope.mjs` | `ironlaw-record/scripts/` | diff → 范围键 → 逐键对照 §2.5/§2.6，漏键点名（铁律四的机器侧） |
 | `ship-truth.mjs` | `ironlaw-ship/scripts/` | 四方真值核验：本地 / 远端 / 线上 / 分发 |
 
-都在技能目录内，用 `node <path>` 直接跑，无第三方依赖。
+都在技能目录内，用 `node <path>` 直接跑，无第三方依赖。`ironlaw-bootstrap` 脚手架还会把 `verify-record` / `safe-push.sh` / `bump-version.mjs` 铺进项目仓库。
 
 ## 这套东西不做什么
 
