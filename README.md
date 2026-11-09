@@ -66,6 +66,61 @@ node plugins/ironlaw/skills/ironlaw-record/scripts/verify-record.mjs docs/change
 node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.json
 ```
 
+## 安装
+
+### 方式一：一键装进 WorkBuddy（推荐）
+
+拿到仓库后执行一次：
+
+```bash
+node scripts/install.mjs
+```
+
+它会做四件事：包自检 → 复制 6 个技能到 `~/.workbuddy/skills/` → 装后复验 → 打印可用命令。
+
+常用参数：
+
+```bash
+node scripts/install.mjs --dry-run        # 只看会做什么，不改文件
+node scripts/install.mjs --prune-legacy   # 顺手把旧版散装技能归档（不删除）
+node scripts/install.mjs --list           # 列出包内容
+node scripts/install.mjs --target <dir>   # 装到项目级 .workbuddy/skills
+```
+
+装完**重启 WorkBuddy 会话**才会被扫描到。
+
+### 方式二：作为插件 marketplace 挂载
+
+仓库根有 `.codebuddy-plugin/marketplace.json`，`plugins/ironlaw/` 是完整插件（含 `commands/` 与 `skills/`）。
+在 WorkBuddy 的插件市场里以「目录」形式添加本仓库根目录即可。
+
+**两种方式的差别**：方式二会额外启用 `commands/`，斜杠命令带参数提示（`argument-hint`）；
+方式一下技能名本身就是斜杠命令，功能一致，但没有参数提示。
+
+### 方式三：只要技能文件
+
+```bash
+cp -r plugins/ironlaw/skills/* ~/.workbuddy/skills/
+```
+
+## 怎么调用
+
+装好重启后，三种调用方式都成立：
+
+| 方式 | 例子 | 说明 |
+|---|---|---|
+| **斜杠命令** | `/ironlaw-change` | 直接调起对应技能 |
+| **快捷短语** | 「用铁律修这个 bug」 | 命中 description 里的触发词 |
+| **自然语言** | 「这个门禁老假红怎么办」 | 技能描述匹配后自动加载 |
+
+不确定用哪个就走总入口：
+
+```
+/ironlaw
+```
+
+或者直接说「走一遍铁律流程」，它会先问清这次属于哪一段，再加载对应技能。
+
 ## 快速开始
 
 **新项目：**
