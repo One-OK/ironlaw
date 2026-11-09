@@ -70,6 +70,8 @@ node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.js
 
 ## 安装
 
+不想 clone 仓库的话，直接下发行包：**[ironlaw-1.0.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.0.0/ironlaw-1.0.0.zip)**（122 KB），解压后同样跑 `node scripts/install.mjs`。
+
 ### 方式一：一键装进 WorkBuddy（推荐）
 
 拿到仓库后执行一次：
