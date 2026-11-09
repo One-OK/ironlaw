@@ -4,7 +4,13 @@
 
 `https://github.com/One-OK/ironlaw`
 
-在线读（不用装也能看懂）：**https://one-ok.github.io/ironlaw/**
+在线读（不用装也能看懂）：**https://one-ok.github.io/ironlaw/** · [English](./README.en.md) · [English site](https://one-ok.github.io/ironlaw/en.html)
+
+先读哪篇：
+
+- **落地页** → https://one-ok.github.io/ironlaw/ （六段，两分钟看完它是什么）
+- **为什么门禁会假绿** → https://one-ok.github.io/ironlaw/why.html （七种假绿、三种假红、探针三态、十问清单）
+- **一个改动走完五段** → [docs/walkthrough.md](./docs/walkthrough.md)
 
 一套 WorkBuddy Skill 套件。解决一个具体问题：
 
@@ -72,7 +78,7 @@ node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.js
 
 ## 安装
 
-不想 clone 仓库的话，直接下发行包：**[ironlaw-1.0.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.0.0/ironlaw-1.0.0.zip)**（122 KB），解压后同样跑 `node scripts/install.mjs`。
+不想 clone 仓库的话，直接下发行包：**[ironlaw-1.0.1.zip](https://github.com/One-OK/ironlaw/releases/download/v1.0.1/ironlaw-1.0.1.zip)**（122 KB），解压后同样跑 `node scripts/install.mjs`。
 
 ### 方式一：一键装进 WorkBuddy（推荐）
 

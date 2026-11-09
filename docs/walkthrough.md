@@ -172,7 +172,7 @@ node plugins/ironlaw/skills/ironlaw-record/scripts/verify-record.mjs \
   ✓ #2 视图层不再裸用 amount：0 行（期望 =0）
   ✓ #3 导出模块已走格式化：2 行（期望 >=1）
   ✓ #4 移动端同步修复：1 行（期望 >=1）
-  ✗ #5 报表模板同步修复：0 行（期望 >=1）   ← 漏了！
+  ✗ #5 报表模板同步修复：0 行（期望 >=1）
 
 [verify-record] FAIL：1 项不合格
   - 断言 #5（报表模板同步修复）不成立：期望 >=1，实际 0 行

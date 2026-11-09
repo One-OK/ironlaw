@@ -1,6 +1,6 @@
 {
   "name": "ironlaw",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IronLaw（铁律）：把工程纪律变成机器的 Skill 套件。改动纪律、门禁工程、变更档案、上线闭环、项目脚手架五段一体。",
   "author": {
     "name": "IronLaw"

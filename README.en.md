@@ -2,7 +2,7 @@
 
 **Turn engineering discipline into machinery.**
 
-Read online (no install needed): **https://one-ok.github.io/ironlaw/**
+Read online (no install needed): **https://one-ok.github.io/ironlaw/en.html** · [中文](https://one-ok.github.io/ironlaw/) · [Why gates go silently green](https://one-ok.github.io/ironlaw/why.html) (Chinese)
 
 A skill suite for WorkBuddy that solves one narrow problem:
 
@@ -55,7 +55,7 @@ You do not run all five every time:
 
 ## Install
 
-No need to clone: grab the release package **[ironlaw-1.0.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.0.0/ironlaw-1.0.0.zip)** (122 KB), unzip it, then run `node scripts/install.mjs`.
+No need to clone: grab the release package **[ironlaw-1.0.1.zip](https://github.com/One-OK/ironlaw/releases/download/v1.0.1/ironlaw-1.0.1.zip)** (122 KB), unzip it, then run `node scripts/install.mjs`.
 
 ```bash
 node scripts/install.mjs

@@ -71,13 +71,14 @@
   .nav-links a{font-size:13.5px;color:var(--muted);transition:color .2s var(--ease)}
   .nav-links a:hover{color:var(--ink)}
   .nav-links a.active{color:var(--ink)}
+  .lang{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em}
   .btn{
     display:inline-flex;align-items:center;gap:7px;border-radius:99px;
     font-size:13.5px;font-weight:550;padding:8px 15px;border:1px solid var(--line-2);color:var(--ink);
     transition:border-color .2s var(--ease),background .2s var(--ease),color .2s var(--ease),transform .2s var(--ease);
   }
   .btn:hover{border-color:var(--ink);transform:translateY(-1px)}
-  @media (max-width:820px){ .nav-links a:not(.btn){display:none} }
+  @media (max-width:880px){ .nav-links a:not(.btn):not(.lang){display:none} }
 
   /* ---------- hero ---------- */
   .hero{padding:clamp(52px,8vw,104px) 0 clamp(44px,6vw,76px)}
@@ -287,7 +288,7 @@
       <a class="brand" href="#top" aria-label="IronLaw 首页">
         <span class="mark" aria-hidden="true"><i></i></span>
         <b>IronLaw</b>
-        <span class="chip">v1.0.0</span>
+        <span class="chip">v1.0.1</span>
       </a>
       <nav class="nav-links" aria-label="主导航">
         <a href="#problem">问题</a>
@@ -296,6 +297,8 @@
         <a href="#proof">证据</a>
         <a href="#tools">工具</a>
         <a href="#install">安装</a>
+        <a href="why.html">为什么</a>
+        <a class="lang" href="en.html" hreflang="en" lang="en">EN</a>
         <a class="btn" href="https://github.com/One-OK/ironlaw" target="_blank" rel="noopener">GitHub<svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M8.5 3.5H4.4M8.5 3.5v4.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </nav>
     </div>
@@ -314,9 +317,9 @@
           把每一次判断都落成机器能查的东西：门禁、断言、真值核验。
         </p>
         <div class="cta" data-reveal style="--i:2">
-          <a class="btn btn-solid btn-lg" href="https://github.com/One-OK/ironlaw/releases/download/v1.0.0/ironlaw-1.0.0.zip">下载 v1.0.0</a>
+          <a class="btn btn-solid btn-lg" href="https://github.com/One-OK/ironlaw/releases/download/v1.0.1/ironlaw-1.0.1.zip">下载 v1.0.1</a>
           <a class="btn btn-lg" href="#proof">先看它怎么抓错</a>
-          <span class="cta-note">122 KB · 零依赖 · 不用装也能读完这页</span>
+          <span class="cta-note">零依赖 · 不用装也能读完这页</span>
         </div>
 
         <div class="stats" data-reveal style="--i:3">
@@ -489,7 +492,7 @@
 <span class="t-ok">  ✓ #2 视图层不再裸用 amount：0 行（期望 =0）</span>
 <span class="t-ok">  ✓ #3 导出模块已走格式化：2 行（期望 &gt;=1）</span>
 <span class="t-ok">  ✓ #4 移动端同步修复：1 行（期望 &gt;=1）</span>
-<span class="t-bad">  ✗ #5 报表模板同步修复：0 行（期望 &gt;=1）   ← 漏了！</span>
+<span class="t-bad">  ✗ #5 报表模板同步修复：0 行（期望 &gt;=1）</span>
 
 <span class="t-bad">[verify-record] FAIL：1 项不合格</span>
 <span class="t-bad">  - 断言 #5（报表模板同步修复）不成立：期望 &gt;=1，实际 0 行</span></pre>
@@ -605,13 +608,14 @@
         <span class="brand"><span class="mark" aria-hidden="true"><i></i></span><b>IronLaw</b></span>
         <nav class="foot-links" aria-label="页脚导航">
           <a href="https://github.com/One-OK/ironlaw" target="_blank" rel="noopener">仓库</a>
+          <a href="why.html">为什么门禁会假绿</a>
           <a href="https://github.com/One-OK/ironlaw/blob/main/docs/walkthrough.md" target="_blank" rel="noopener">完整走查</a>
-          <a href="https://github.com/One-OK/ironlaw/blob/main/README.en.md" target="_blank" rel="noopener">English</a>
+          <a href="en.html" hreflang="en" lang="en">English</a>
           <a href="https://github.com/One-OK/ironlaw/releases" target="_blank" rel="noopener">发布记录</a>
         </nav>
       </div>
       <div class="sign">
-        <span>MIT © 2026 IronLaw · v1.0.0</span>
+        <span>MIT © 2026 IronLaw · v1.0.1</span>
         <strong>断言红了就改代码。</strong>
       </div>
     </div>
