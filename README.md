@@ -83,7 +83,7 @@ node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.js
 
 ## 安装
 
-不想 clone 仓库的话，直接下发行包：**[ironlaw-1.1.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.1.0/ironlaw-1.1.0.zip)**，解压后同样跑 `node scripts/install.mjs`。
+不想 clone 仓库的话，直接下发行包：**[ironlaw-1.2.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.2.0/ironlaw-1.2.0.zip)**，解压后同样跑 `node scripts/install.mjs`。
 
 ### 方式一：一键装进 WorkBuddy（推荐）
 
@@ -105,6 +105,20 @@ node scripts/install.mjs --target <dir>   # 装到项目级 .workbuddy/skills
 ```
 
 装完**重启 WorkBuddy 会话**才会被扫描到。
+
+### 兼容：装进 Claude Code / Codex
+
+SKILL.md 是通用格式，换个目标目录即可：
+
+```bash
+# Claude Code：装到用户级技能目录，重启会话后 /ironlaw 系列即可用
+node scripts/install.mjs --target ~/.claude/skills
+
+# Codex / 其他读 AGENTS.md 标准的工具：脚手架原样可用
+node plugins/ironlaw/skills/ironlaw-bootstrap/scripts/init-project.mjs /path/to/repo
+```
+
+脚手架铺的 `AGENTS.md` 遵循 [agents.md](https://agents.md) 开放格式（Codex 原生读取）。Claude Code 读取的是 `CLAUDE.md`——加一行 `@AGENTS.md` 引用即可共享同一份真源，**不要复制两份**（铁律三对文档同样生效）。
 
 ### 方式二：作为插件 marketplace 挂载
 

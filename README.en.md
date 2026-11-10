@@ -55,7 +55,7 @@ You do not run all five every time:
 
 ## Install
 
-No need to clone: grab the release package **[ironlaw-1.1.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.1.0/ironlaw-1.1.0.zip)**, unzip it, then run `node scripts/install.mjs`.
+No need to clone: grab the release package **[ironlaw-1.2.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.2.0/ironlaw-1.2.0.zip)**, unzip it, then run `node scripts/install.mjs`.
 
 ```bash
 node scripts/install.mjs
@@ -71,6 +71,20 @@ node scripts/install.mjs --target <dir>   # install into a project-level .workbu
 ```
 
 Restart your WorkBuddy session afterwards so the skills get scanned.
+
+### Also works with Claude Code / Codex
+
+SKILL.md is a portable format — just point the installer elsewhere:
+
+```bash
+# Claude Code: install into the user-level skills directory
+node scripts/install.mjs --target ~/.claude/skills
+
+# Codex / anything reading the AGENTS.md standard: the scaffold works as-is
+node plugins/ironlaw/skills/ironlaw-bootstrap/scripts/init-project.mjs /path/to/repo
+```
+
+The scaffold's `AGENTS.md` follows the open [agents.md](https://agents.md) format (Codex reads it natively). Claude Code reads `CLAUDE.md` — add a single `@AGENTS.md` line there to share the same source of truth. **Do not copy the file twice** (iron law 3 applies to docs too).
 
 ### Alternative: mount as a plugin marketplace
 
