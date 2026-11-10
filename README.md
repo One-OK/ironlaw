@@ -83,7 +83,7 @@ node plugins/ironlaw/skills/ironlaw-ship/scripts/ship-truth.mjs --config ship.js
 
 ## 安装
 
-不想 clone 仓库的话，直接下发行包：**[ironlaw-1.2.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.2.0/ironlaw-1.2.0.zip)**，解压后同样跑 `node scripts/install.mjs`。
+不想 clone 仓库的话，直接下发行包：**[ironlaw-1.3.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.3.0/ironlaw-1.3.0.zip)**，解压后同样跑 `node scripts/install.mjs`。
 
 ### 方式一：一键装进 WorkBuddy（推荐）
 
@@ -108,7 +108,14 @@ node scripts/install.mjs --target <dir>   # 装到项目级 .workbuddy/skills
 
 ### 兼容：装进 Claude Code / Codex
 
-SKILL.md 是通用格式，换个目标目录即可：
+Claude Code 插件市场（推荐，两条命令）——在 Claude Code 会话内执行：
+
+```
+/plugin marketplace add One-OK/ironlaw
+/plugin install ironlaw@ironlaw
+```
+
+不走插件市场也可以直接装技能文件（SKILL.md 是通用格式）：
 
 ```bash
 # Claude Code：装到用户级技能目录，重启会话后 /ironlaw 系列即可用

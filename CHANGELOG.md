@@ -2,6 +2,21 @@
 
 本文件记录 IronLaw 的公开版本变化。
 
+## 1.3.0 — 2026-11-10
+
+分发与触达版本。**技能判定逻辑与工具行为不变**；新增的是安装渠道、匹配面与推广基建。
+
+**新增**
+
+- `.claude-plugin/` —— Claude Code 插件市场清单：`/plugin marketplace add One-OK/ironlaw` → `/plugin install ironlaw@ironlaw` 两条命令完成安装；`plugin.json` 补 `homepage` / `repository` 与双语描述。
+- 六个技能的 `description` 全部补英文触发词——非中文用户输入（"guard never fails"、"cannot reproduce"、"push succeeded but not live"…）也能命中自动加载。
+- `docs/promotion-kit.md` —— 分渠道推广物料（X / Show HN / Reddit / V2EX / 掘金 / awesome-list PR 草稿）与品牌纪律（只用可证伪的事实做宣传）。
+- `scripts/package.mjs` 的 REQUIRED 清单点名两个插件清单文件——分发清单缺失时打包判红，而不是静默少发一个渠道。
+
+**已验证（洁净室）**
+
+- v1.2.0 发行包从 GitHub 下载 → md5 与本地逐字节一致（`49771f95…`）→ 解压后对**发行包本体**跑 `node scripts/smoke.mjs` → **22/22**；`install.mjs --dry-run` 六技能自检 OK。分发通道真值与仓库声明闭环。
+
 ## 1.2.0 — 2026-11-10
 
 与同行（GitHub spec-kit / obra superpowers / BMAD-METHOD / taskmaster）对比后，补齐三个轻量缺口。**工具行为不变**，新增的是程序、判据与生态覆盖；冒烟测试 22 项结果与 1.1.0 相同。

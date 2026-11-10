@@ -1,6 +1,6 @@
 ---
 name: ironlaw-bootstrap
-description: 给新项目（或缺少纪律设施的老项目）一次性铺设工程纪律骨架。当用户说「开个新项目」「初始化仓库」「把规范铺上」「这个项目也要有门禁」「整理开发流程」，或准备从零开发一个可交付项目时使用。提供可直接运行的安装器（钩子 + 门禁 + 共享件 + 文档模板）、渐进落地路线、目录契约，避免一上来铺 80 个门禁导致没人跑。触发词：新项目、初始化、脚手架、bootstrap、scaffold、搭骨架、铺规范、项目模板、setup repo。
+description: 给新项目（或缺少纪律设施的老项目）一次性铺设工程纪律骨架。当用户说「开个新项目」「初始化仓库」「把规范铺上」「这个项目也要有门禁」「整理开发流程」，或准备从零开发一个可交付项目时使用。提供可直接运行的安装器（钩子 + 门禁 + 共享件 + 文档模板）、渐进落地路线、目录契约，避免一上来铺 80 个门禁导致没人跑。触发词：新项目、初始化、脚手架、bootstrap、scaffold、搭骨架、铺规范、项目模板、setup repo。English triggers: new repo setup, initialize project discipline, install git hooks and guards, project scaffold, bootstrap repo rules.
 display_name_zh: 铁律 · 项目脚手架
 display_name_en: IronLaw · Project Bootstrap
 agent_created: true

@@ -55,7 +55,7 @@ You do not run all five every time:
 
 ## Install
 
-No need to clone: grab the release package **[ironlaw-1.2.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.2.0/ironlaw-1.2.0.zip)**, unzip it, then run `node scripts/install.mjs`.
+No need to clone: grab the release package **[ironlaw-1.3.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.3.0/ironlaw-1.3.0.zip)**, unzip it, then run `node scripts/install.mjs`.
 
 ```bash
 node scripts/install.mjs
@@ -74,7 +74,14 @@ Restart your WorkBuddy session afterwards so the skills get scanned.
 
 ### Also works with Claude Code / Codex
 
-SKILL.md is a portable format — just point the installer elsewhere:
+Claude Code plugin marketplace (recommended — two commands inside a Claude Code session):
+
+```
+/plugin marketplace add One-OK/ironlaw
+/plugin install ironlaw@ironlaw
+```
+
+Or install the skill files directly (SKILL.md is a portable format):
 
 ```bash
 # Claude Code: install into the user-level skills directory

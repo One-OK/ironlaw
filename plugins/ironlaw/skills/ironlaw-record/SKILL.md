@@ -1,6 +1,6 @@
 ---
 name: ironlaw-record
-description: 写「变更档案」与「提交信息」的规范与校验。当一次改动涉及产品代码、准备提交/推送、需要写 commit message、需要证明影响链已闭环，或用户说「写个变更记录」「影响链」「提交规范」「commit 怎么写」时使用。提供七段档案模板、§2.5 机器可执行断言表文法、§7 完成判据负控制、三段式提交信息，并附可直接执行的档案校验器 verify-record.mjs。触发词：变更档案、change record、影响链、断言、提交信息、commit message、改动说明、上线文档。
+description: 写「变更档案」与「提交信息」的规范与校验。当一次改动涉及产品代码、准备提交/推送、需要写 commit message、需要证明影响链已闭环，或用户说「写个变更记录」「影响链」「提交规范」「commit 怎么写」时使用。提供七段档案模板、§2.5 机器可执行断言表文法、§7 完成判据负控制、三段式提交信息，并附可直接执行的档案校验器 verify-record.mjs。触发词：变更档案、change record、影响链、断言、提交信息、commit message、改动说明、上线文档。English triggers: change record, impact chain, assertion table, commit message format, negative control, prove impact closed.
 display_name_zh: 铁律 · 变更档案
 display_name_en: IronLaw · Change Record
 agent_created: true

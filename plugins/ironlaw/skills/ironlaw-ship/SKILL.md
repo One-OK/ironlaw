@@ -1,6 +1,6 @@
 ---
 name: ironlaw-ship
-description: 从「代码改完」到「线上真值确认」的完整上线闭环。当用户说「发版」「上线」「部署」「推上去」「出个包」「怎么发布」「部署后怎么验证」「线上版本对不上」时使用。提供发版定义、七步顺序铁律、推送三判据、真值源矩阵、部署后复验、自动链抑制、发布锁与发布权、回滚方案，并附可直接运行的四方真值核验工具 ship-truth.mjs。触发词：发版、上线、部署、deploy、release、推送、出包、台账、线上版本、回滚、灰度。
+description: 从「代码改完」到「线上真值确认」的完整上线闭环。当用户说「发版」「上线」「部署」「推上去」「出个包」「怎么发布」「部署后怎么验证」「线上版本对不上」时使用。提供发版定义、七步顺序铁律、推送三判据、真值源矩阵、部署后复验、自动链抑制、发布锁与发布权、回滚方案，并附可直接运行的四方真值核验工具 ship-truth.mjs。触发词：发版、上线、部署、deploy、release、推送、出包、台账、线上版本、回滚、灰度。English triggers: release, deploy to production, ship it, push succeeded but not live, verify deployment, rollback plan, release ledger, version mismatch in production.
 display_name_zh: 铁律 · 上线闭环
 display_name_en: IronLaw · Ship Closure
 agent_created: true

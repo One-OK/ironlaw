@@ -1,0 +1,22 @@
+{
+  "name": "ironlaw",
+  "description": "IronLaw（铁律）：把工程纪律变成机器的 Skill 套件。改动纪律、门禁工程、变更档案、上线闭环、项目脚手架五段一体。",
+  "owner": {
+    "name": "One-OK",
+    "url": "https://github.com/One-OK"
+  },
+  "metadata": {
+    "version": "1.3.0",
+    "license": "MIT",
+    "language": ["zh-CN", "en"]
+  },
+  "plugins": [
+    {
+      "name": "ironlaw",
+      "description": "IronLaw suite: 1 router skill + 5 domain skills + 6 slash commands + 4 runnable verification tools. Turns \"this change is trustworthy\" into machine-checkable proof.",
+      "source": "./plugins/ironlaw",
+      "category": "engineering-discipline",
+      "version": "1.3.0"
+    }
+  ]
+}

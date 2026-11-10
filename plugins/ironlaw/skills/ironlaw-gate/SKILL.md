@@ -1,6 +1,6 @@
 ---
 name: ironlaw-gate
-description: 编写与修复机械门禁/静态守卫的方法论。当用户要求「加个门禁」「补守卫」「写 check 脚本」「这个检查怎么自动化」「门禁又红了/假红/假绿」，或某类缺陷需要固化防复发时使用。提供门禁七要素、缺数据 fail-closed、反向变异探针、判据单一真源、聚合器注册、失败输出可归因、EXIT 码四态、熔断与成本控制，并附可直接运行的守卫骨架与反向探针工具。触发词：门禁、守卫、guard、check 脚本、静态扫描、假红、假绿、自证、selftest、CI 卡住。
+description: 编写与修复机械门禁/静态守卫的方法论。当用户要求「加个门禁」「补守卫」「写 check 脚本」「这个检查怎么自动化」「门禁又红了/假红/假绿」，或某类缺陷需要固化防复发时使用。提供门禁七要素、缺数据 fail-closed、反向变异探针、判据单一真源、聚合器注册、失败输出可归因、EXIT 码四态、熔断与成本控制，并附可直接运行的守卫骨架与反向探针工具。触发词：门禁、守卫、guard、check 脚本、静态扫描、假红、假绿、自证、selftest、CI 卡住。English triggers: add a guard, write a check script, false green, gate never fails, static scan, selftest, mutation probe, CI stuck red, prevent regression.
 display_name_zh: 铁律 · 门禁工程
 display_name_en: IronLaw · Gate Engineering
 agent_created: true

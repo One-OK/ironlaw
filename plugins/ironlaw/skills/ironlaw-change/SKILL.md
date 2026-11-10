@@ -1,6 +1,6 @@
 ---
 name: ironlaw-change
-description: 项目无关的改动纪律总纲。当用户要求「修这个 bug」「加这个功能」「从根源修」「开工」「复盘」「调试」「复现不出来」，或任何一次要改产品代码/配置/文案的变更开始时使用。提供开工六问、根因真源定位、影响链六类枚举、验证设施免责、调试程序四段、测试先行判据、机械复检四连、固化守卫、复盘三问，以及多写者并行合并协议。触发词：修 bug、加功能、根因、影响链、复盘、开工、并行开发、撞文件、merge、从根源解决、调试、debug、复现、二分、定位问题。
+description: 项目无关的改动纪律总纲。当用户要求「修这个 bug」「加这个功能」「从根源修」「开工」「复盘」「调试」「复现不出来」，或任何一次要改产品代码/配置/文案的变更开始时使用。提供开工六问、根因真源定位、影响链六类枚举、验证设施免责、调试程序四段、测试先行判据、机械复检四连、固化守卫、复盘三问，以及多写者并行合并协议。触发词：修 bug、加功能、根因、影响链、复盘、开工、并行开发、撞文件、merge、从根源解决、调试、debug、复现、二分、定位问题。English triggers: fix bug, add feature, root cause, debug procedure, cannot reproduce, test first, impact chain, retrospective, parallel writers, merge conflict.
 display_name_zh: 铁律 · 改动纪律
 display_name_en: IronLaw · Change Discipline
 agent_created: true

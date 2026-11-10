@@ -1,6 +1,6 @@
 ---
 name: ironlaw
-description: IronLaw（铁律）工程纪律套件总入口。当用户说「用铁律」「走铁律流程」「开工」「按纪律来」「这套流程怎么走」「该用哪个技能」，或需要在「改动纪律 / 门禁工程 / 变更档案 / 上线闭环 / 项目脚手架」之间做选择时使用。负责路由到对应子技能，并给出全流程视图与四条铁律。触发词：铁律、ironlaw、工程纪律、开工、按流程来、走一遍流程、该用哪个、纪律套件。
+description: IronLaw（铁律）工程纪律套件总入口。当用户说「用铁律」「走铁律流程」「开工」「按纪律来」「这套流程怎么走」「该用哪个技能」，或需要在「改动纪律 / 门禁工程 / 变更档案 / 上线闭环 / 项目脚手架」之间做选择时使用。负责路由到对应子技能，并给出全流程视图与四条铁律。触发词：铁律、ironlaw、工程纪律、开工、按流程来、走一遍流程、该用哪个、纪律套件。English triggers: ironlaw, discipline suite, which skill, full process, route me, engineering workflow.
 display_name_zh: 铁律 · 总入口
 display_name_en: IronLaw · Router
 agent_created: true
