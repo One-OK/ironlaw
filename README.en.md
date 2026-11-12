@@ -55,7 +55,7 @@ You do not run all five every time:
 
 ## Install
 
-No need to clone: grab the release package **[ironlaw-1.3.0.zip](https://github.com/One-OK/ironlaw/releases/download/v1.3.0/ironlaw-1.3.0.zip)**, unzip it, then run `node scripts/install.mjs`.
+No need to clone: grab the release package **[ironlaw-1.3.1.zip](https://github.com/One-OK/ironlaw/releases/download/v1.3.1/ironlaw-1.3.1.zip)**, unzip it, then run `node scripts/install.mjs`.
 
 ```bash
 node scripts/install.mjs
